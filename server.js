@@ -19,8 +19,7 @@ app.get('/', (req, res) => {
     res.send('hello');
 });
 
-// app.use('/createRoom', require('./Routes/createRoom'));
-// app.use('/joinRoom', require('./Routes/joinRoom'));
+app.use('/api/room', require('./Routes/Room'));
 
 // Real time communication
 io.on('connection', (socket) => {
@@ -30,12 +29,18 @@ io.on('connection', (socket) => {
         io.emit('message', 'user leaved');
     })
     socket.on('join-room', (data) => {
-        console.log(data.roomName + data.username + 'join-room')
-        socket.join(data.roomName);
-
+        // console.log(data.roomName + data.userName + ' inside of a join-room')
+        socket.join(data.userName);
     })
     socket.on('send-message', (message) => {
-        console.log(message.msg + message.roomName + message.username + "send-message")
-        io.in(message.roomName).emit('message-received', message);
+        // console.log(message.roomName +" " + message.recentMessage + message.userName + "send-message")
+        // console.log(message);
+        message.users.forEach(user => {
+            // console.log(user + " user in send-message room");
+            if(message.sender !== user) {
+                io.to(user).emit('message-received', message);
+            }
+        })
+        
     })
 });

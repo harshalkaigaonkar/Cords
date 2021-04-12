@@ -2,9 +2,9 @@ import React from 'react';
 
 const Message = ({ message }) => {
     return (
-        <div>
-            {message}
-        </div>
+        <ul>
+            <li>{message}</li>
+        </ul>
     )
 }
 
