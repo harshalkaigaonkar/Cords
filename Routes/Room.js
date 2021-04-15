@@ -16,36 +16,31 @@ router.post('/createRoom', (req, res) => {
     data.messages = [];
     data.recentMessage = '';
     delete data.userName;
+    // adding the resultant object into the rooms object.
     rooms[data.roomName] = data;
-
-    // console.log(JSON.stringify(rooms) + " rooms create room")
     res.json(rooms[data.roomName]);
 })
 
 router.post('/joinRoom', (req, res) => {
     const data = req.body;
     let room = rooms[data.roomName];
-    if(room) {
+    if (room) {
         room.users.push(data.userName);
         return res.send(room)
     }
-    res.send({error: "room doesn't exist"});
+    res.send({ error: "room doesn't exist" });
 })
 
-router.post('/getRoom', async(req, res) => {
+router.post('/getRoom', async (req, res) => {
     const data = req.body;
-    // console.log(JSON.stringify(data) + " get Room")
     let room = await rooms[data.roomName];
-    // console.log(room +  " Room get room")
-    if(room) {
-        // console.log(rooms)
-        return res.send(rooms[data.roomName])
+    if (room) {
+        return res.send(room)
     }
-    res.send({error: "room doesn't exist"});
+    res.send({ error: "room doesn't exist" });
 })
 
-router.get('/rooms', async(req, res) => {
-    
+router.get('/rooms', async (req, res) => {
     res.send(rooms);
 })
 
@@ -54,23 +49,22 @@ router.get('/rooms', async(req, res) => {
 router.post('/message', (req, res) => {
     const data = req.body;
     let room = rooms[data.roomName];
-    if(room) {
+    if (room) {
         room.recentMessage = data.recentMessage;
         var msg = {
             sender: data.userName,
-            message:data.message
+            message: data.message
         }
         room.messages.push(msg);
-        // console.log(JSON.stringify(room) + " inside of room in message")
         const payload = {
             roomName: data.roomName,
-            message:data.message,
-            sender:data.userName,
+            message: data.message,
+            sender: data.userName,
             users: rooms[data.roomName].users,
         }
         return res.send(payload);
     }
-    res.send({error: "room doesn't exist"});
+    res.send({ error: "room doesn't exist" });
 })
 
 module.exports = router;

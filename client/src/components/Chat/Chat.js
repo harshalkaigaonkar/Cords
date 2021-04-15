@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Message from './Message';
 import SocketContext from '../../context/socket/SocketContext';
 import UserContext from '../../context/user/UserContext';
 
@@ -11,49 +12,49 @@ const Chat = () => {
         getRoomData();
         socket.on('message-received', (message) => {
             addMessageToUi(message);
-            console.log(message)
         })
-   }, []);
-    
+        // eslint-disable-next-line
+    }, []);
+
     const socketContext = useContext(SocketContext);
-    const {socket} = socketContext;
+    const { socket } = socketContext;
 
     const userContext = useContext(UserContext);
-    const {userName,room} = userContext;
+    const { userName } = userContext;
 
+    // takes roomName from Query string URL using useParams Hook.
     const roomName = useParams().roomName;
-    console.log(roomName)
+
     const [msg, Setmsg] = useState('');
-    const [error, Seterror] = useState("");    
-        const addMessageToUi = (message) => {
-            var node = document.createElement('li');
-            var textnode = document.createTextNode(getMessageUi(message));
-            node.appendChild(textnode);
-            document.getElementById("message").appendChild(node);
+    const [error, Seterror] = useState('');
+
+
+    const addMessageToUi = (message) => {
+        var node = document.createElement('li');
+        var textnode = document.createTextNode(getMessageUi(message));
+        node.appendChild(textnode);
+        document.getElementById("message").appendChild(node);
+    }
+    const getMessageUi = (message) => {
+        const element = `${message.sender} : ${message.message}`;
+        return element;
+    }
+    const getRoomData = async () => {
+        const sendData = {
+            roomName: roomName,
+            userName: userName
         }
-        const getMessageUi = (message) => {
-           const element =  `${message.sender} : ${message.message}`;
-           return element;
+        const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
+        const data = res.data;
+        if (data.error) {
+            Seterror(data.error);
+            return;
         }
-        const getRoomData = async () => {
-            const sendData = {
-                roomName: roomName,
-                userName: userName
-            }
-            const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
-            console.log(res.data)
-            console.log(sendData)
-            const data = res.data;
-            if(data.error) {
-                Seterror(data.error);
-                return;
-            }
-            if(data) {
-                console.log(data.messages)
-                messages = data.messages;
-            }
+        if (data) {
+            messages = data.messages;
         }
-       
+    }
+
 
 
     const onSubmit = async (e) => {
@@ -65,18 +66,17 @@ const Chat = () => {
             recentMessage: msg
         }
         const res = await axios.post('http://localhost:3001/api/room/message', messagePayload);
-            const data = res.data;
-            console.log(res.data + " insid the message res.data")
-            if(data.error) {
-               return Seterror(data.error);
-            }
-            if(data) {
-                socket.emit('send-message', data);
-            }
+        const data = res.data;
+        if (data.error) {
+            return Seterror(data.error);
+        }
+        if (data) {
+            socket.emit('send-message', data);
+        }
         addMessageToUi(data);
         Setmsg('');
     }
-    
+
     const onChange = (e) => {
         Setmsg(e.target.value);
     }
@@ -90,8 +90,8 @@ const Chat = () => {
             <ul id='message'>
                 {
                     messages.map(message => (
-                        <li key="message" key={message.sender}>
-                           {getMessageUi(message)}
+                        <li key={message.sender}>
+                            <Message key={message.sender} message={message} />
                         </li>
                     ))
                 }
