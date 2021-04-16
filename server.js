@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./db/db');
 
+connectDB();
 const app = express();
 app.use(cors());
 app.use(express.json({ extended: false }));
@@ -19,6 +21,10 @@ app.get('/', (req, res) => {
     res.send('hello');
 });
 
+
+//Routes
+app.use('/auth/register', require('./Routes/Auth/Register'));
+app.use('/auth/login', require('./Routes/Auth/Login'));
 app.use('/api/room', require('./Routes/Room'));
 
 // Real time communication
@@ -29,18 +35,13 @@ io.on('connection', (socket) => {
         io.emit('message', 'user leaved');
     })
     socket.on('join-room', (data) => {
-        // console.log(data.roomName + data.userName + ' inside of a join-room')
         socket.join(data.userName);
     })
     socket.on('send-message', (message) => {
-        // console.log(message.roomName +" " + message.recentMessage + message.userName + "send-message")
-        // console.log(message);
         message.users.forEach(user => {
-            // console.log(user + " user in send-message room");
-            if(message.sender !== user) {
+            if (message.sender !== user) {
                 io.to(user).emit('message-received', message);
             }
         })
-        
     })
 });

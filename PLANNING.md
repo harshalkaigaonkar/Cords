@@ -2,12 +2,12 @@ project plan:
 
 implementation discussion :
 
--> implement text to display in real-time.
--> join room features
+-> implement text to display in real-time.-------- Done
+-> join room features ----in progress
 -> authentication features
 -> rest
 
-socket tags :
-'message' : a global tag for sending welcome, user joined and user leaved messages.
+topics for today:
 
-'sendMessage' : a tag for sending messages .
+2. checking if there is user joining or leaving room.
+3. leaving room functionality for users and changes in room object.

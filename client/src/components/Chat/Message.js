@@ -2,9 +2,7 @@ import React from 'react';
 
 const Message = ({ message }) => {
     return (
-        <ul>
-            <li>{message}</li>
-        </ul>
+        <p>{message.sender} : {message.message}</p>
     )
 }
 

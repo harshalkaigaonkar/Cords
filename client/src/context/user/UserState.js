@@ -1,34 +1,34 @@
-import React,{useReducer} from 'react';
+import React, { useReducer } from 'react';
 import UserContext from './UserContext';
 import UserReducer from './UserReducer';
-import {CONNECTED_USER, User_CONNECTED} from '../type';
+import { CONNECTED_USER } from '../type';
 
 
 
 const UserState = (props) => {
 
     const initialState = {
-        userName: '',
+        userName: null,
         roomName: null
     }
 
-    const [state,dispatch] = useReducer(UserReducer,initialState);
+    const [state, dispatch] = useReducer(UserReducer, initialState);
 
-    const connectRoom = (socket,payload) => {
-        dispatch({type:CONNECTED_USER,payload:payload})
+    const connectRoom = (socket, payload) => {
+        dispatch({ type: CONNECTED_USER, payload: payload })
         socket.emit('join-room', payload);
     }
 
 
-    return  (
-        <UserContext.Provider 
-             value ={{
-                 userName:state.userName,
-                 roomName:state.roomName,
-                 connectRoom
-             }}
+    return (
+        <UserContext.Provider
+            value={{
+                userName: state.userName,
+                roomName: state.roomName,
+                connectRoom
+            }}
         >
-           {props.children}
+            {props.children}
         </UserContext.Provider>
     )
 }
