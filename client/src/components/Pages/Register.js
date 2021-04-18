@@ -4,11 +4,12 @@ import axios from 'axios';
 
 const Register = (props) => {
     const authContext = useContext(AuthContext);
+    const { isAuthenticated, register } = authContext;
     useEffect(() => {
-        if (authContext.isAuthenticated) {
+        if (isAuthenticated) {
             props.history.push('/');
         }
-    }, [props.history, authContext.isAuthenticated])
+    }, [props.history, isAuthenticated])
     const [email, Setemail] = useState("");
     const [password, Setpassword] = useState("");
     const [name, Setname] = useState("");
@@ -21,7 +22,7 @@ const Register = (props) => {
             email,
             password
         }
-        authContext.register(data);
+        register(data);
         // context
     }
     const onEmailChange = (e) => {

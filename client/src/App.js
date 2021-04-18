@@ -10,10 +10,9 @@ import UserState from './context/user/UserState';
 import PrivateRoute from './components/Routing/PrivateRoute';
 import setAuthToken from './Utils/setAuthToken'
 
-if (localStorage.getItem('token')) {
-    setAuthToken(localStorage.getItem('token'));
+if (localStorage.token) {
+    setAuthToken(localStorage.token);
 }
-
 const App = () => {
     return (
         <AuthState>
@@ -23,9 +22,9 @@ const App = () => {
                         <div>
                             <h1>ChatApp</h1>
                             <Switch>
+                                <PrivateRoute exact path='/' component={Homepage} />
                                 <Route exact path="/register" component={Register} />
                                 <Route exact path="/login" component={Login} />
-                                <PrivateRoute exact path='/' component={Homepage} />
                                 <Route exact path='/room/:roomName' component={Chat} />
                             </Switch>
                         </div>

@@ -9,24 +9,28 @@ import { USER_REGISTER, USER_LOGIN, GET_USER } from '../type';
 
 const AuthState = (props) => {
 
-    useEffect(() => {
-        loadUser(localStorage.getItem('token'));
-    }, [])
+    // useEffect(() => {
+    //     loadUser(localStorage.getItem('token'));
+    // }, [])
 
     const initialState = {
-        isAuthenticated: false,
+        isAuthenticated: null,
         user: null,
         token: localStorage.getItem('token')
     }
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-    const loadUser = async (token) => {
-        if (token) {
-            setAuthToken(token);
+    const loadUser = async () => {
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
         }
-        const res = await axios.get('http://localhost:3001/auth/login');
-        dispatch({ type: GET_USER, payload: res.data });
+        try {
+            const res = await axios.get('http://localhost:3001/auth/login');
+            dispatch({ type: GET_USER, payload: res.data });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     const register = async (data) => {
@@ -43,7 +47,7 @@ const AuthState = (props) => {
             const res = await axios.post('http://localhost:3001/auth/register', data, config);
             console.log(res.data)
             dispatch({ type: USER_REGISTER, payload: res.data.token })
-            loadUser(res.data.token);
+            loadUser();
         } catch (error) {
             console.error(error);
             //make error
@@ -64,12 +68,15 @@ const AuthState = (props) => {
             const res = await axios.post('http://localhost:3001/auth/login', data, config);
             console.log(res.data)
             dispatch({ type: USER_LOGIN, payload: res.data.token })
-            loadUser(res.data.token);
+            loadUser();
         } catch (error) {
             console.error(error);
             //make error
         }
     }
+
+    //logout is left to be made
+    // clear errors
 
     return (
         <AuthContext.Provider
