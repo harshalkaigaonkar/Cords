@@ -4,11 +4,13 @@ import axios from 'axios';
 
 const Login = (props) => {
     const authContext = useContext(AuthContext);
+    const { isAuthenticated, login } = authContext;
     useEffect(() => {
-        if (authContext.isAuthenticated) {
+        if (isAuthenticated) {
             props.history.push('/');
         }
-    }, [props.history, authContext.isAuthenticated])
+        // eslint-disable-next-line
+    }, [props.history, isAuthenticated])
     const [email, Setemail] = useState("");
     const [password, Setpassword] = useState("");
     const onSubmit = async (e) => {
@@ -17,7 +19,7 @@ const Login = (props) => {
             email,
             password
         }
-        authContext.login(data);
+        login(data);
         // context
     }
     const onEmailChange = (e) => {

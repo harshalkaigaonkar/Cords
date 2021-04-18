@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const { randomBytes } = require('crypto');
+const auth = require('../middleware/auth');
 
 app.use(express.json())
 
 var rooms = {};
 
-router.post('/createRoom', (req, res) => {
+router.post('/createRoom', auth, (req, res) => {
     const data = req.body;
     data.createdBy = data.userName;
     const roomId = randomBytes(5).toString('hex');
@@ -21,7 +22,7 @@ router.post('/createRoom', (req, res) => {
     res.json(rooms[data.roomName]);
 })
 
-router.post('/joinRoom', (req, res) => {
+router.post('/joinRoom', auth, (req, res) => {
     const data = req.body;
     let room = rooms[data.roomName];
     if (room) {
@@ -31,7 +32,7 @@ router.post('/joinRoom', (req, res) => {
     res.send({ error: "room doesn't exist" });
 })
 
-router.post('/getRoom', async (req, res) => {
+router.post('/getRoom', auth, async (req, res) => {
     const data = req.body;
     let room = await rooms[data.roomName];
     if (room) {
@@ -40,13 +41,11 @@ router.post('/getRoom', async (req, res) => {
     res.send({ error: "room doesn't exist" });
 })
 
-router.get('/rooms', async (req, res) => {
+router.get('/rooms', auth, async (req, res) => {
     res.send(rooms);
 })
 
-
-
-router.post('/message', (req, res) => {
+router.post('/message', auth, (req, res) => {
     const data = req.body;
     let room = rooms[data.roomName];
     if (room) {

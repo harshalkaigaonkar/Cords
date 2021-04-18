@@ -2,14 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import SocketContext from '../../context/socket/SocketContext';
 import UserContext from '../../context/user/UserContext';
+import AuthContext from '../../context/auth/AuthContext';
 
 
 const Homepage = (props) => {
     const socketContext = useContext(SocketContext);
+    const authContext = useContext(AuthContext);
     const { socketConnection } = socketContext;
-
+    const { loadUser } = authContext;
     useEffect(() => {
         socketConnection();
+        loadUser();
         //eslint-disable-next-line
     }, []);
     const { socket } = socketContext;

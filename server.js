@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
 
 
 //Routes
-app.use('/auth/register', require('./Routes/Auth/Register'));
-app.use('/auth/login', require('./Routes/Auth/Login'));
+app.use('/auth/register', require('./Routes/Register'));
+app.use('/auth/login', require('./Routes/Login'));
 app.use('/api/room', require('./Routes/Room'));
 
 // Real time communication
