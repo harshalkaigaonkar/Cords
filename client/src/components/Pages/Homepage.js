@@ -11,7 +11,7 @@ const Homepage = (props) => {
     useEffect(() => {
         socketConnection();
         //eslint-disable-next-line
-    }, [])
+    }, []);
     const { socket } = socketContext;
     const userContext = useContext(UserContext);
     const { connectRoom } = userContext;

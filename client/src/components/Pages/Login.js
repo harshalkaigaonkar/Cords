@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import AuthContext from '../../context/auth/AuthContext'
 import axios from 'axios';
 
-const Login = () => {
+const Login = (props) => {
+    const authContext = useContext(AuthContext);
+    useEffect(() => {
+        if (authContext.isAuthenticated) {
+            props.history.push('/');
+        }
+    }, [props.history, authContext.isAuthenticated])
     const [email, Setemail] = useState("");
     const [password, Setpassword] = useState("");
     const onSubmit = async (e) => {
@@ -10,9 +17,8 @@ const Login = () => {
             email,
             password
         }
-        const res = await axios.post('http://localhost:3001/auth/login', data);
+        authContext.login(data);
         // context
-        console.log(res.data);
     }
     const onEmailChange = (e) => {
         Setemail(e.target.value);
@@ -23,8 +29,8 @@ const Login = () => {
     return (
         <div>
             <form onSubmit={onSubmit}>
-                <input value={email} type="text" placeholder="Email" autoFocus onChange={onEmailChange} />
-                <input value={password} type="text" placeholder="Password" onChange={onPasswordChange} />
+                <input value={email} type="text" placeholder="Email" onChange={onEmailChange} />
+                <input value={password} type="password" placeholder="Password" onChange={onPasswordChange} />
                 <input type="submit" value="Login" />
             </form>
         </div>
