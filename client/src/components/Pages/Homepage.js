@@ -5,16 +5,16 @@ import UserContext from '../../context/user/UserContext';
 import AuthContext from '../../context/auth/AuthContext';
 
 
-const Homepage = (props) => {
+const Homepage =  (props) => {
     const socketContext = useContext(SocketContext);
-    const authContext = useContext(AuthContext);
     const { socketConnection } = socketContext;
-    const { loadUser } = authContext;
-    useEffect(() => {
+    const authContext = useContext(AuthContext);
+
+    useEffect(  () => {
         socketConnection();
-        loadUser();
+        authContext.loadUser();    
         //eslint-disable-next-line
-    }, []);
+    }, [localStorage.token]);
     const { socket } = socketContext;
     const userContext = useContext(UserContext);
     const { connectRoom } = userContext;
