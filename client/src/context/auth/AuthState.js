@@ -18,11 +18,15 @@ const AuthState = (props) => {
     const [state, dispatch] = useReducer(AuthReducer, initialState);
 
     const loadUser = async () => {
+        if(!localStorage.token) {
+            return;
+        }
         if (localStorage.token) {
             setAuthToken(localStorage.token);
         }
         try {
              const res = await axios.get('http://localhost:3001/auth/login');
+             console.log(res)
              dispatch({ type: GET_USER, payload: res.data });
            
         } catch (error) {
