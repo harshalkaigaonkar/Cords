@@ -4,8 +4,12 @@ import AuthContext from '../../context/auth/AuthContext';
 const Navbar = () => {
 
     const authContext = useContext(AuthContext);
-    const {isAuthenticated,logout} = authContext;
+    const {isAuthenticated,logout,loadUser} = authContext;
     
+    useEffect(  () => {
+        loadUser();    
+        //eslint-disable-next-line
+    }, [localStorage.token]);
 
     const onSubmit = () => {
         logout();
