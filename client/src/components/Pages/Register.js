@@ -5,11 +5,13 @@ import axios from 'axios';
 const Register = (props) => {
     const authContext = useContext(AuthContext);
     const { isAuthenticated, register } = authContext;
+    
     useEffect(() => {
         if (isAuthenticated) {
             props.history.push('/');
         }
     }, [props.history, isAuthenticated])
+
     const [email, Setemail] = useState("");
     const [password, Setpassword] = useState("");
     const [name, Setname] = useState("");

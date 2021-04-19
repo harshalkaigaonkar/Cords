@@ -3,15 +3,11 @@ import AuthContext from './AuthContext';
 import AuthReducer from './AuthReducer';
 import setAuthToken from '../../Utils/setAuthToken';
 import axios from 'axios';
-import { USER_REGISTER, USER_LOGIN, GET_USER } from '../type';
+import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT } from '../type';
 
 
 
 const AuthState = (props) => {
-
-    // useEffect(() => {
-    //     loadUser(localStorage.getItem('token'));
-    // }, [])
 
     const initialState = {
         isAuthenticated: null,
@@ -26,8 +22,9 @@ const AuthState = (props) => {
             setAuthToken(localStorage.token);
         }
         try {
-            const res = await axios.get('http://localhost:3001/auth/login');
-            dispatch({ type: GET_USER, payload: res.data });
+             const res = await axios.get('http://localhost:3001/auth/login');
+             dispatch({ type: GET_USER, payload: res.data });
+           
         } catch (error) {
             console.error(error);
         }
@@ -76,6 +73,9 @@ const AuthState = (props) => {
     }
 
     //logout is left to be made
+    const logout = () => {
+        dispatch({type:USER_LOGOUT})
+    }
     // clear errors
 
     return (
@@ -86,7 +86,8 @@ const AuthState = (props) => {
                 isAuthenticated: state.isAuthenticated,
                 register,
                 loadUser,
-                login
+                login,
+                logout
             }}
         >
             {props.children}

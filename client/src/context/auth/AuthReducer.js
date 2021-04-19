@@ -1,4 +1,4 @@
-import { USER_REGISTER, USER_LOGIN, GET_USER } from '../type';
+import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT } from '../type';
 
 
 const AuthReducer = (state, action) => {
@@ -16,6 +16,13 @@ const AuthReducer = (state, action) => {
                 ...state,
                 user: action.payload,
                 isAuthenticated: true
+            };
+        case USER_LOGOUT:
+            localStorage.removeItem('token')
+            return {
+                ...state,
+                user: null,
+                isAuthenticated: false
             };
         default:
             return state;
