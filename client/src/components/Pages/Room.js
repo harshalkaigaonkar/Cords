@@ -1,29 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import AuthContext from '../../context/auth/AuthContext';
 import axios from 'axios';
-import Message from './Message';
-import SocketContext from '../../context/socket/SocketContext';
-import UserContext from '../../context/user/UserContext';
+
 
 
 var messages = [];
-const Chat = () => {
-    useEffect(() => {
-        getRoomData();
-        socket.on('message-received', (message) => {
-            addMessageToUi(message);
-        })
-        // eslint-disable-next-line
-    }, []);
-
-    const socketContext = useContext(SocketContext);
-    const { socket } = socketContext;
-
-    const userContext = useContext(UserContext);
-    const { userName } = userContext;
+const Room = (props) => {
 
     // takes roomName from Query string URL using useParams Hook.
     const roomName = useParams().roomName;
+    const authContext = useContext(AuthContext);
+    const { user } = authContext;
+
+    useEffect(() => {
+        // eslint-disable-next-line
+    }, [])
+
 
     const [msg, Setmsg] = useState('');
     const [error, Seterror] = useState('');
@@ -42,7 +35,7 @@ const Chat = () => {
     const getRoomData = async () => {
         const sendData = {
             roomName: roomName,
-            userName: userName
+            userName: user.username
         }
         const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
         const data = res.data;
@@ -61,7 +54,7 @@ const Chat = () => {
         e.preventDefault();
         const messagePayload = {
             roomName: roomName,
-            userName: userName,
+            userName: user.username,
             message: msg,
             recentMessage: msg
         }
@@ -71,7 +64,7 @@ const Chat = () => {
             return Seterror(data.error);
         }
         if (data) {
-            socket.emit('send-message', data);
+            // socket.emit('send-message', data);
         }
         addMessageToUi(data);
         Setmsg('');
@@ -91,7 +84,7 @@ const Chat = () => {
                 {
                     messages.map(message => (
                         <li key={message.sender}>
-                            <Message key={message.sender} message={message} />
+                            <p>{message.message}</p>
                         </li>
                     ))
                 }
@@ -100,4 +93,4 @@ const Chat = () => {
     )
 }
 
-export default Chat;
+export default Room;

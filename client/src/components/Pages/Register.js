@@ -1,11 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import AuthContext from '../../context/auth/AuthContext'
-import axios from 'axios';
+import AuthContext from '../../context/auth/AuthContext';
 
 const Register = (props) => {
     const authContext = useContext(AuthContext);
     const { isAuthenticated, register } = authContext;
-    
+
     useEffect(() => {
         if (isAuthenticated) {
             props.history.push('/');
