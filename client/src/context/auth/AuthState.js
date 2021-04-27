@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer } from 'react';
 import AuthContext from './AuthContext';
 import AuthReducer from './AuthReducer';
 import setAuthToken from '../../Utils/setAuthToken';
@@ -26,7 +26,6 @@ const AuthState = (props) => {
         }
         try {
             const res = await axios.get('http://localhost:3001/auth/login');
-            console.log(res)
             dispatch({ type: GET_USER, payload: res.data });
 
         } catch (error) {
@@ -46,7 +45,6 @@ const AuthState = (props) => {
                 return;
             }
             const res = await axios.post('http://localhost:3001/auth/register', data, config);
-            console.log(res.data)
             dispatch({ type: USER_REGISTER, payload: res.data.token })
             loadUser();
         } catch (error) {
