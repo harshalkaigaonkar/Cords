@@ -18,22 +18,26 @@ router.get('/', auth, async (req, res) => {
 })
 
 router.post('/', [
-    check("email", "Please include a valid email").isEmail()
+    check("email", "Please include a valid email").isEmail(),
+    check(
+        "password",
+        "Please enter a password with at least min 6 characters length"
+    ).isLength({ min: 6 })
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(203).json({ message: errors.array() });
+        return res.status(203).json({ error: { message: errors.array() } });
     }
     const { email, password } = req.body;
     try {
         let user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(203).json({ message: "Invalid Credentials" });
+            return res.status(203).json({ error: { message: "Invalid Credentials" } });
         } else {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return res.status(203).json({ message: "Invalid Credentials" });
+                return res.status(203).json({ error: { message: "Invalid Credentials" } });
             }
             const payload = {
                 user: {
@@ -55,7 +59,7 @@ router.post('/', [
         }
     } catch (err) {
         console.error(err.message);
-        res.status(500).json("Server Error");
+        res.status(500).json({ error: { message: "Server Error" } });
     }
 });
 

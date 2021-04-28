@@ -1,46 +1,46 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams,Redirect } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import axios from 'axios';
 
 
 
 var messages = [];
-const Room = (props) => {
+const Room = () => {
     // takes roomName from Query string URL using useParams Hook.
     const roomName = useParams().roomName;
     const authContext = useContext(AuthContext);
-    const { user,removeUser } = authContext;
-    
+    const { user } = authContext;
+
     useEffect(() => {
         getRoomData();
         // eslint-disable-next-line
     }, [])
 
     window.onbeforeunload = (e) => {
-         e.preventDefault();
-         if(e) {
-              e.returnValue = ''
-         }
-         return '';
-         removeUser();
+        e.preventDefault();
+        if (e) {
+            alert("you will be disconnected from room")
+            e.returnValue = '';
+        }
+        return '';
     };
 
-      const getRoomData = async () => {
-          const sendData = {
-              roomName: roomName,
-              userName: user.username
-          }
-          const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
-          const data = res.data;
-          if (data.error) {
-              Seterror(data.error);
-              return;
-          }
-          if (data) {
-              messages = data.messages;
-          }
-      }
+    const getRoomData = async () => {
+        const sendData = {
+            roomName: roomName,
+            userName: user.username
+        }
+        const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
+        const data = res.data;
+        if (data.error) {
+            Seterror(data.error);
+            return;
+        }
+        if (data) {
+            messages = data.messages;
+        }
+    }
 
 
     const [msg, Setmsg] = useState('');
@@ -84,7 +84,7 @@ const Room = (props) => {
     return (
         <div>
             {error && <h3>{error}</h3>}
-            <h1>{user.username}</h1>
+            {/* <h1>{user.username}</h1> */}
             <form onSubmit={onSubmit}>
                 <input autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
                 <button>Send</button>

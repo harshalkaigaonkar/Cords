@@ -1,19 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import AuthContext from '../../context/auth/AuthContext';
 import setAuthToken from '../../Utils/setAuthToken';
 
-
-
 const Homepage = (props) => {
     const authContext = useContext(AuthContext);
-    const { loadUser, user,pushUser } = authContext;
+    const { user, pushUser } = authContext;
 
-    useEffect(() => {
-        loadUser();
 
-        //eslint-disable-next-line
-    }, []);
+
     const [roomName, SetroomName] = useState("");
     const [error, Seterror] = useState("");
 
@@ -27,7 +22,7 @@ const Homepage = (props) => {
         }
         const payload = {
             roomName: roomName,
-            userName: user.username
+            userName: user ? user.username : 'Anonymous',
         }
         var request = await type === "create" ? "createRoom" : "joinRoom";
         const res = await axios.post(`http://localhost:3001/api/room/${request}`, payload);
@@ -45,8 +40,9 @@ const Homepage = (props) => {
     }
     return (
         <div>
-            <h2>Create Room</h2>
             {error && <h3>{error}</h3>}
+            {user && <h3>{user.name}</h3>}
+            <h2>Create Room</h2>
             <form onSubmit={(e) => onSubmit(e, "create")}>
                 <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
                 <input type="submit" value="create" />

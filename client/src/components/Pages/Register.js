@@ -1,9 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../context/auth/AuthContext';
+import ErrorContext from '../../context/error/ErrorContext';
 
 const Register = (props) => {
     const authContext = useContext(AuthContext);
+    const errorContext = useContext(ErrorContext);
     const { isAuthenticated, register } = authContext;
+    const { error } = errorContext;
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -40,6 +43,7 @@ const Register = (props) => {
     }
     return (
         <div>
+            {error && <p>{error}</p>}
             <form onSubmit={onSubmit}>
                 <input value={name} type="text" placeholder="Name" autoFocus onChange={onNameChange} />
                 <input value={username} type="text" placeholder="Username" onChange={onUserNameChange} />

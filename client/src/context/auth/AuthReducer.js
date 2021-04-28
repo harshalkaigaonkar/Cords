@@ -20,12 +20,12 @@ const AuthReducer = (state, action) => {
         case PUSH_USER:
             return {
                 ...state,
-                inRoom : true
+                inRoom: true
             };
         case REMOVE_USER:
             return {
                 ...state,
-                inRoom : false
+                inRoom: false
             };
         case USER_LOGOUT:
             localStorage.removeItem('token')

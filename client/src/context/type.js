@@ -4,3 +4,5 @@ export const GET_USER = "GET_USER";
 export const USER_LOGOUT = "USER_LOGOUT";
 export const PUSH_USER = "PUSH_USER";
 export const REMOVE_USER = "REMOVE_USER";
+export const SET_ERRORS = "SET_ERRORS";
+export const CLEAR_ERRORS = "SET_ERRORS";
