@@ -7,6 +7,7 @@ import PrivateRoute from './components/Routing/PrivateRoute';
 import setAuthToken from './Utils/setAuthToken';
 import Navbar from './components/layout/Navbar';
 import AuthState from './context/auth/AuthState';
+import ErrorState from './context/error/ErrorState';
 import './App.css';
 
 
@@ -15,19 +16,21 @@ if (localStorage.token) {
 }
 const App = () => {
     return (
-        <AuthState>
-            <Router>
-                <div>
-                    <Navbar />
-                    <Switch>
-                        <PrivateRoute exact path='/' component={Homepage} />
-                        <Route exact path='/register' component={Register} />
-                        <Route exact path='/login' component={Login} />
-                        <PrivateRoute exact path='/room/:roomName' itsRoom = {true} component={Room} />
-                    </Switch>
-                </div>
-            </Router>
-        </AuthState>
+        <ErrorState>
+            <AuthState>
+                <Router>
+                    <div>
+                        <Navbar />
+                        <Switch>
+                            <PrivateRoute exact path='/' component={Homepage} />
+                            <Route exact path='/register' component={Register} />
+                            <Route exact path='/login' component={Login} />
+                            <PrivateRoute exact path='/room/:roomName' itsRoom={true} component={Room} />
+                        </Switch>
+                    </div>
+                </Router>
+            </AuthState>
+        </ErrorState>
     )
 }
 

@@ -1,6 +1,7 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext } from 'react';
 import AuthContext from './AuthContext';
 import AuthReducer from './AuthReducer';
+import ErrorContext from '../error/ErrorContext';
 import setAuthToken from '../../Utils/setAuthToken';
 import axios from 'axios';
 import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT, PUSH_USER, REMOVE_USER } from '../type';
@@ -8,6 +9,9 @@ import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT, PUSH_USER, REMOVE_USE
 
 
 const AuthState = (props) => {
+
+    const errorContext = useContext(ErrorContext);
+    const { setError } = errorContext;
 
     const initialState = {
         isAuthenticated: false,
@@ -25,32 +29,35 @@ const AuthState = (props) => {
         if (localStorage.token) {
             setAuthToken(localStorage.token);
         }
-        try {
-            const res = await axios.get('http://localhost:3001/auth/login');
+        const res = await axios.get('http://localhost:3001/auth/login');
+        if (res.data.error) {
+            setError(res.data.error);
+            return;
+        }
+        if (res.data) {
             dispatch({ type: GET_USER, payload: res.data });
-
-        } catch (error) {
-            console.error(error);
         }
     }
-    
+
     const register = async (data) => {
         const config = {
             headers: {
                 'Content-Type': "application/json"
             }
         }
-        try {
-            if (!data) {
-                // make error
-                return;
-            }
-            const res = await axios.post('http://localhost:3001/auth/register', data, config);
+
+        if (!data) {
+            console.log("hello here");
+            return;
+        }
+        const res = await axios.post('http://localhost:3001/auth/register', data, config);
+        if (res.data.error) {
+            setError(res.data.error);
+            return;
+        }
+        if (res.data) {
             dispatch({ type: USER_REGISTER, payload: res.data.token })
             loadUser();
-        } catch (error) {
-            console.error(error);
-            //make error
         }
     }
 
@@ -60,31 +67,29 @@ const AuthState = (props) => {
                 'Content-Type': "application/json"
             }
         }
-        try {
-            if (!data) {
-                // make error
-                return;
-            }
-            const res = await axios.post('http://localhost:3001/auth/login', data, config);
-            console.log(res.data)
+        if (!data) {
+            // make error
+            return;
+        }
+        const res = await axios.post('http://localhost:3001/auth/login', data, config);
+        if (res.data.error) {
+            setError(res.data.error);
+            return;
+        }
+        if (res.data) {
             dispatch({ type: USER_LOGIN, payload: res.data.token })
             loadUser();
-        } catch (error) {
-            console.error(error);
-            //make error
         }
     }
-    const pushUser =() => {
-        dispatch({type: PUSH_USER})
+    const pushUser = () => {
+        dispatch({ type: PUSH_USER })
     }
     const removeUser = () => {
-        dispatch({type : REMOVE_USER})
+        dispatch({ type: REMOVE_USER })
     }
-    //logout is left to be made
     const logout = () => {
         dispatch({ type: USER_LOGOUT })
     }
-    // clear errors
 
     return (
         <AuthContext.Provider
@@ -93,6 +98,7 @@ const AuthState = (props) => {
                 token: state.token,
                 isAuthenticated: state.isAuthenticated,
                 inRoom: state.inRoom,
+                error: state.error,
                 register,
                 loadUser,
                 login,

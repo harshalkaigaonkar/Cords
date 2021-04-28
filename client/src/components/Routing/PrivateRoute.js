@@ -3,13 +3,13 @@ import { Route, Redirect } from 'react-router';
 import AuthContext from '../../context/auth/AuthContext';
 
 
-const PrivateRoute = ({ component: Component,itsRoom ,...rest }) => {
+const PrivateRoute = ({ component: Component, itsRoom, ...rest }) => {
 
     const authContext = useContext(AuthContext);
 
-    const { isAuthenticated,inRoom } = authContext;
+    const { isAuthenticated, inRoom } = authContext;
 
-    if(itsRoom) {
+    if (itsRoom) {
         return (
             <Route {...rest} render={props => !inRoom ? (
                 <Redirect to='/' />
@@ -18,13 +18,13 @@ const PrivateRoute = ({ component: Component,itsRoom ,...rest }) => {
             )} />
         )
     } else
-    return (
-        <Route {...rest} render={props => !isAuthenticated ? (
-            <Redirect to='/login' />
-        ) : (
-            <Component {...props} />
-        )} />
-    )
+        return (
+            <Route {...rest} render={props => !isAuthenticated ? (
+                <Redirect to='/login' />
+            ) : (
+                <Component {...props} />
+            )} />
+        )
 }
 
 export default PrivateRoute

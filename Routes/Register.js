@@ -16,14 +16,14 @@ router.post('/', [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(203).json({ error: { message: errors.array() } });
     }
     const { username, password, name, email } = req.body;
     try {
         let user = await User.findOne({ email: email });
 
         if (user) {
-            return res.status(400).json({ msg: "User Already exists" });
+            return res.status(400).json({ error: { message: "User Already exists" } });
         }
 
         user = new User({
@@ -58,7 +58,7 @@ router.post('/', [
         );
     } catch (error) {
         console.log(error.message);
-        res.status(500).send("Error in Server!")
+        res.status(500).send({ error: { message: "Error in Server!" } })
     }
 });
 

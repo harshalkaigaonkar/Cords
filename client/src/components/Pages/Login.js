@@ -1,11 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../context/auth/AuthContext';
+import ErrorContext from '../../context/error/ErrorContext';
 
 const Login = (props) => {
     const authContext = useContext(AuthContext);
+    const errorContext = useContext(ErrorContext);
     const { isAuthenticated, login } = authContext;
+    const { error } = errorContext;
+
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && localStorage.getItem('token') !== undefined) {
             props.history.push('/');
         }
         // eslint-disable-next-line
@@ -29,6 +33,7 @@ const Login = (props) => {
     }
     return (
         <div>
+            {error && <p>{error}</p>}
             <form onSubmit={onSubmit}>
                 <input value={email} type="text" placeholder="Email" onChange={onEmailChange} />
                 <input value={password} type="password" placeholder="Password" onChange={onPasswordChange} />
