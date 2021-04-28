@@ -3,7 +3,7 @@ import AuthContext from './AuthContext';
 import AuthReducer from './AuthReducer';
 import setAuthToken from '../../Utils/setAuthToken';
 import axios from 'axios';
-import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT } from '../type';
+import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT, PUSH_USER, REMOVE_USER } from '../type';
 
 
 
@@ -12,7 +12,8 @@ const AuthState = (props) => {
     const initialState = {
         isAuthenticated: false,
         user: null,
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        inRoom: false
     }
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
@@ -32,7 +33,7 @@ const AuthState = (props) => {
             console.error(error);
         }
     }
-
+    
     const register = async (data) => {
         const config = {
             headers: {
@@ -73,7 +74,12 @@ const AuthState = (props) => {
             //make error
         }
     }
-
+    const pushUser =() => {
+        dispatch({type: PUSH_USER})
+    }
+    const removeUser = () => {
+        dispatch({type : REMOVE_USER})
+    }
     //logout is left to be made
     const logout = () => {
         dispatch({ type: USER_LOGOUT })
@@ -86,9 +92,12 @@ const AuthState = (props) => {
                 user: state.user,
                 token: state.token,
                 isAuthenticated: state.isAuthenticated,
+                inRoom: state.inRoom,
                 register,
                 loadUser,
                 login,
+                pushUser,
+                removeUser,
                 logout
             }}
         >

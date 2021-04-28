@@ -7,7 +7,7 @@ import setAuthToken from '../../Utils/setAuthToken';
 
 const Homepage = (props) => {
     const authContext = useContext(AuthContext);
-    const { loadUser, user } = authContext;
+    const { loadUser, user,pushUser } = authContext;
 
     useEffect(() => {
         loadUser();
@@ -36,6 +36,7 @@ const Homepage = (props) => {
             return Seterror(data.error);
         }
         if (data) {
+            pushUser();
             props.history.push(`/room/${data.roomName}`);
         }
     }

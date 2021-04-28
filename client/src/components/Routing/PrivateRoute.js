@@ -3,12 +3,21 @@ import { Route, Redirect } from 'react-router';
 import AuthContext from '../../context/auth/AuthContext';
 
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
+const PrivateRoute = ({ component: Component,itsRoom ,...rest }) => {
 
     const authContext = useContext(AuthContext);
 
-    const { isAuthenticated } = authContext;
+    const { isAuthenticated,inRoom } = authContext;
 
+    if(itsRoom) {
+        return (
+            <Route {...rest} render={props => !inRoom ? (
+                <Redirect to='/' />
+            ) : (
+                <Component {...props} />
+            )} />
+        )
+    } else
     return (
         <Route {...rest} render={props => !isAuthenticated ? (
             <Redirect to='/login' />
