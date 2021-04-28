@@ -1,10 +1,11 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect } from 'react';
+// import { Link } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 
-const Navbar = (props) => {
+const Navbar = () => {
 
     const authContext = useContext(AuthContext);
-    const { isAuthenticated, logout, user, loadUser } = authContext;
+    const { isAuthenticated, logout, user, loadUser, inRoom } = authContext;
     useEffect(() => {
         if (localStorage.getItem('token') && !isAuthenticated) {
             loadUser();
@@ -17,13 +18,13 @@ const Navbar = (props) => {
     }
     return (
         <div className='navbar'>
-            <div className='app-name'><h1>ChatApp</h1></div>
-            {isAuthenticated &&
+            <div className='app-name'><a href='/'><h1>ChatApp</h1></a></div>
+            {(isAuthenticated && !inRoom) &&
                 <div className='logout pointer'>
                     <input type='submit' value='logout' onClick={onSubmit} />
-                    {user && <h3>{user.name}</h3>}
                 </div>
             }
+            {user && <h3>{user.name}</h3>}
         </div>
     )
 }

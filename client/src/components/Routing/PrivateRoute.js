@@ -11,10 +11,10 @@ const PrivateRoute = ({ component: Component, itsRoom, ...rest }) => {
 
     if (itsRoom) {
         return (
-            <Route {...rest} render={props => !inRoom ? (
-                <Redirect to='/' />
-            ) : (
+            <Route {...rest} render={props => isAuthenticated && inRoom ? (
                 <Component {...props} />
+            ) : (
+                <Redirect to='/' />
             )} />
         )
     } else
