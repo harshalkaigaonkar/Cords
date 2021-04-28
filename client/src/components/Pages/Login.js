@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import ErrorContext from '../../context/error/ErrorContext';
 
@@ -38,6 +39,7 @@ const Login = (props) => {
                 <input value={email} type="text" placeholder="Email" onChange={onEmailChange} />
                 <input value={password} type="password" placeholder="Password" onChange={onPasswordChange} />
                 <input type="submit" value="Login" />
+                <Link to='/register'>Don't have an account? Register</Link>
             </form>
         </div>
     )

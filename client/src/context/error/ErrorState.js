@@ -16,6 +16,10 @@ const ErrorState = (props) => {
             dispatch({ type: SET_ERRORS, payload: error.message });
         else
             dispatch({ type: SET_ERRORS, payload: error.message[0].msg });
+
+            setTimeout(() => {
+                clearError();
+            },4000);
     }
 
     const clearError = () => {
