@@ -18,11 +18,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 router.post('/', [
-    check("email", "Please include a valid email").isEmail(),
-    check(
-        "password",
-        "Please enter a password with at least min 6 characters length"
-    ).isLength({ min: 6 })
+    check("email", "Please include a valid email").isEmail()
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
