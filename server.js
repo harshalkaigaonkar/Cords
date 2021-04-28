@@ -24,5 +24,20 @@ app.use('/auth/login', require('./Routes/Login'));
 app.use('/api/room', require('./Routes/Api/Room'));
 
 // Real time communication
+io.on('connection', (socket) => {
+    socket.on("join", (user) => {
+        console.log(`${user.username} is joined`);
+        socket.join(user.username);
+    })
+
+    socket.on("send message", (data) => {
+
+        data.users.map(user => {
+            if (user !== data.sender) {
+                socket.to(user).emit("received message", data);
+            }
+        })
+    })
+})
 
 Server.listen(PORT, () => console.log(`Server on port ${PORT}`));
