@@ -3,33 +3,67 @@ const app = express();
 const router = express.Router();
 const { randomBytes } = require('crypto');
 const auth = require('../../middleware/auth');
+const Room = require('../../models/RoomSchema');
+const Message = require('../../models/MessageSchema');
 
 app.use(express.json())
 
-var rooms = {};
+router.post('/createRoom', auth, async (req, res) => {
+    const { roomname, userId } = req.body;
 
-router.post('/createRoom', auth, (req, res) => {
-    const data = req.body;
-    data.createdBy = data.userName;
-    const roomId = randomBytes(5).toString('hex');
-    data.roomId = roomId;
-    data.users = [data.userName];
-    data.messages = [];
-    data.recentMessage = '';
-    delete data.userName;
-    // adding the resultant object into the rooms object.
-    rooms[data.roomName] = data;
-    res.json(rooms[data.roomName]);
+    if (!req.body) return res.status(203).send({ error: { message: "no data found" } });
+
+    try {
+        const users = [];
+        const messages = [];
+        users.push(userId);
+
+        const roomData = {
+            users,
+            createdBy: userId,
+            roomname: roomname,
+            messages
+        }
+
+        let room = await Room.findOne({ roomname: roomname });
+
+        if (room) return res.status(203).send({ error: { message: "Room is already exist" } })
+
+        room = new Room(roomData);
+
+        await room.save();
+
+        res.status(200).send(room);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error: { message: "Error in Server!" } })
+    }
+
 })
 
-router.post('/joinRoom', auth, (req, res) => {
-    const data = req.body;
-    let room = rooms[data.roomName];
-    if (room) {
-        room.users.push(data.userName);
-        return res.send(room)
+router.post('/joinRoom', auth, async (req, res) => {
+
+    const { roomname, userId } = req.body;
+
+    if (!req.body) return res.status(203).send({ error: { message: "no data found" } });
+
+    try {
+
+        let room = await Room.findOne({ roomname: roomname });
+
+        if (!room) return res.status(203).send({ error: { message: "Room does not exist" } })
+
+        // room = Room.findByIdAndUpdate({roomname:roomname},{users:})
+
+        await room.save();
+
+        res.status(200).send(room);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error: { message: "Error in Server!" } })
     }
-    res.send({ error: "room doesn't exist" });
+
+
 })
 
 router.post('/getRoom', auth, async (req, res) => {

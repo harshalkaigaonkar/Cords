@@ -51,7 +51,7 @@ const Register = (props) => {
                 <input value={email} type="text" placeholder="Email" onChange={onEmailChange} />
                 <input value={password} type="password" placeholder="Password" onChange={onPasswordChange} />
                 <input type="submit" value="Register" />
-                <Link to='/register'>Don't have an account? Register</Link>
+                <Link to='/login'>Have an account? Login</Link>
             </form>
         </div>
     )

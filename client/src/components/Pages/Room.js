@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import axios from 'axios';
+import io from 'socket.io-client';
 
-
+const socket = io('http://localhost:3001');
 
 var messages = [];
 const Room = () => {
@@ -11,20 +12,6 @@ const Room = () => {
     const roomName = useParams().roomName;
     const authContext = useContext(AuthContext);
     const { user } = authContext;
-
-    useEffect(() => {
-        getRoomData();
-        // eslint-disable-next-line
-    }, [])
-
-    window.onbeforeunload = (e) => {
-        e.preventDefault();
-        if (e) {
-            alert("you will be disconnected from room")
-            e.returnValue = '';
-        }
-        return '';
-    };
 
     const getRoomData = async () => {
         const sendData = {
@@ -37,10 +24,34 @@ const Room = () => {
             Seterror(data.error);
             return;
         }
+
         if (data) {
             messages = data.messages;
         }
     }
+
+    console.log(messages);
+
+    useEffect(() => {
+        getRoomData();
+        socket.emit('join', user);
+
+        socket.on("received message", (message) => {
+            console.log(message);
+            addMessageToUi(message);
+        })
+        // eslint-disable-next-line
+    }, [])
+
+    window.onbeforeunload = (e) => {
+        e.preventDefault();
+        if (e) {
+            e.returnValue = '';
+        }
+        return '';
+    };
+
+
 
 
     const [msg, Setmsg] = useState('');
@@ -72,7 +83,7 @@ const Room = () => {
             return Seterror(data.error);
         }
         if (data) {
-            // socket.emit('send-message', data);
+            socket.emit('send message', data);
         }
         addMessageToUi(data);
         Setmsg('');
@@ -93,7 +104,7 @@ const Room = () => {
                 {
                     messages.map(message => (
                         <li key={message.sender}>
-                            <p>{message.message}</p>
+                            {getMessageUi(message)}
                         </li>
                     ))
                 }
