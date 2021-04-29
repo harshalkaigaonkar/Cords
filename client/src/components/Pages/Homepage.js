@@ -22,7 +22,7 @@ const Homepage = (props) => {
         }
         const payload = {
             roomName: roomName,
-            userName: user ? user.username : 'Anonymous',
+            userId: user ? user._id : 'Anonymous',
         }
         var request = await type === "create" ? "createRoom" : "joinRoom";
         const res = await axios.post(`http://localhost:3001/api/room/${request}`, payload);
