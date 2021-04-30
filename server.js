@@ -27,7 +27,7 @@ app.use('/api/room', require('./Routes/Api/Room'));
 io.on('connection', (socket) => {
     socket.on("join", (user) => {
         console.log(`${user.username} is joined`);
-        socket.join(user.username);
+        socket.join(user._id);
     })
 
     socket.on("send message", (data) => {

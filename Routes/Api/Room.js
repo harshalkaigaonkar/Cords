@@ -4,6 +4,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Room = require('../../models/RoomSchema');
 const Message = require('../../models/MessageSchema');
+const User = require('../../models/UserSchema');
 
 app.use(express.json())
 
@@ -71,7 +72,9 @@ router.post('/joinRoom', auth, async (req, res) => {
 router.post('/getRoom', auth, async (req, res) => {
     try {
         const { roomname, userId } = req.body;
-        let room = await Room.findOne({ roomname, users: { $elemMatch: { $eq: userId } } });
+        let room = await Room.findOne({ roomname })
+            .populate('messages');
+
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
         res.status(200).send(room);
@@ -86,16 +89,17 @@ router.post('/message', auth, async (req, res) => {
     try {
         const { userId, roomname, message, recentMessage } = req.body;
         let room = await Room.findOne({ roomname });
-        console.log(room + " this is a room")
         if (!room) return res.status(200).send({ error: { message: "You cannot send message without being in the room!" } })
         console.log(room);
         let msg = new Message({
+            roomId: room._id,
             sender: userId,
             roomname,
             message,
         })
         await msg.save();
-        await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: message }})
+
+        await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: msg._id }, recentMessage: msg._id })
         res.status(200).send(msg);
     }
     catch (error) {

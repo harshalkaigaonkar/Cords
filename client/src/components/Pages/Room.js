@@ -8,24 +8,25 @@ const socket = io('http://localhost:3001');
 
 var messages = [];
 const Room = () => {
-    // takes roomName from Query string URL using useParams Hook.
-    const roomName = useParams().roomName;
+    // takes roomname from Query string URL using useParams Hook.
+    const roomname = useParams().roomname;
     const authContext = useContext(AuthContext);
     const { user } = authContext;
-
+    const [Room, setRoom] = useState({});
     const getRoomData = async () => {
         const sendData = {
-            roomName: roomName,
+            roomname: roomname,
             userId: user._id
         }
         const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
         const data = res.data;
         if (data.error) {
-            Seterror(data.error);
+            Seterror(data.error.message);
             return;
         }
 
         if (data) {
+            setRoom(data);
             messages = data.messages;
         }
     }
@@ -72,7 +73,7 @@ const Room = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const messagePayload = {
-            roomName: roomName,
+            roomname: roomname,
             userId: user._id,
             message: msg,
             recentMessage: msg
@@ -83,6 +84,7 @@ const Room = () => {
             return Seterror(data.error);
         }
         if (data) {
+            data.users = Room.users;
             socket.emit('send message', data);
         }
         addMessageToUi(data);
@@ -103,7 +105,7 @@ const Room = () => {
             <ul id='message'>
                 {
                     messages.map(message => (
-                        <li key={message.sender}>
+                        <li key={message._id}>
                             {getMessageUi(message)}
                         </li>
                     ))
