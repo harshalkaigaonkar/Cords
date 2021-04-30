@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const Message = mongoose.Schema({
     roomname: {
-        type: Schema.Types.ObjectId,
-        ref: "Room"
+        type: String,
+        required: "true"
     },
     sender: {
         type: Schema.Types.ObjectId,
