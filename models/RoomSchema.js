@@ -16,11 +16,11 @@ const Room = mongoose.Schema({
     }],
     messages: [{
         type: Schema.Types.ObjectId,
-        ref: 'Messages'
+        ref: 'Message'
     }],
     recentMessage: {
         type: Schema.Types.ObjectId,
-        ref: 'Messages'
+        ref: 'Message'
     }
 }, { timestamps: true })
 

@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Message = mongoose.Schema({
+    roomId: {
+        type: Schema.Types.ObjectId,
+        ref: "Room"
+    },
     roomname: {
         type: String,
         required: "true"

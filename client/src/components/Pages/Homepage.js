@@ -9,7 +9,7 @@ const Homepage = (props) => {
 
 
 
-    const [roomName, SetroomName] = useState("");
+    const [roomname, Setroomname] = useState("");
     const [error, Seterror] = useState("");
 
     const onSubmit = async (e, type) => {
@@ -21,22 +21,23 @@ const Homepage = (props) => {
             setAuthToken(localStorage.token);
         }
         const payload = {
-            roomName: roomName,
+            roomname: roomname,
             userId: user ? user._id : 'Anonymous',
         }
         var request = await type === "create" ? "createRoom" : "joinRoom";
         const res = await axios.post(`http://localhost:3001/api/room/${request}`, payload);
         const data = res.data;
         if (data.error) {
-            return Seterror(data.error);
+            Seterror(data.error.message);
+            return;
         }
         if (data) {
             pushUser();
-            props.history.push(`/room/${data.roomName}`);
+            props.history.push(`/room/${data.roomname}`);
         }
     }
     const onRoomChange = (e) => {
-        SetroomName(e.target.value);
+        Setroomname(e.target.value);
     }
     return (
         <div>
