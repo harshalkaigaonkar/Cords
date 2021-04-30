@@ -10,6 +10,7 @@ var messages = [];
 const Room = () => {
     // takes roomname from Query string URL using useParams Hook.
     const roomname = useParams().roomname;
+    console.log(roomname)
     const authContext = useContext(AuthContext);
     const { user } = authContext;
     const [Room, setRoom] = useState({});
@@ -66,7 +67,7 @@ const Room = () => {
         document.getElementById("message").appendChild(node);
     }
     const getMessageUi = (message) => {
-        const element = `${message.sender} : ${message.message}`;
+        const element = `${message.sender.name} : ${message.message}`;
         return element;
     }
 
@@ -76,7 +77,6 @@ const Room = () => {
             roomname: roomname,
             userId: user._id,
             message: msg,
-            recentMessage: msg
         }
         const res = await axios.post('http://localhost:3001/api/room/message', messagePayload);
         const data = res.data;

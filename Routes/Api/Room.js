@@ -32,7 +32,7 @@ router.post('/createRoom', auth, async (req, res) => {
         room = new Room(roomData);
 
         await room.save();
-
+        
         res.status(200).send(room);
     } catch (error) {
         console.log(error);
@@ -87,10 +87,10 @@ router.post('/getRoom', auth, async (req, res) => {
 
 router.post('/message', auth, async (req, res) => {
     try {
-        const { userId, roomname, message, recentMessage } = req.body;
+        const { userId, roomname, message } = req.body;
         let room = await Room.findOne({ roomname });
         if (!room) return res.status(200).send({ error: { message: "You cannot send message without being in the room!" } })
-        console.log(room);
+    
         let msg = new Message({
             roomId: room._id,
             sender: userId,
@@ -98,7 +98,7 @@ router.post('/message', auth, async (req, res) => {
             message,
         })
         await msg.save();
-
+        msg = await Message.populate(msg, {path: "sender"})
         await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: msg._id }, recentMessage: msg._id })
         res.status(200).send(msg);
     }

@@ -25,7 +25,7 @@ const App = () => {
                             <PrivateRoute exact path='/' component={Homepage} />
                             <Route exact path='/register' component={Register} />
                             <Route exact path='/login' component={Login} />
-                            <PrivateRoute exact path='/room/:roomName' itsRoom={true} component={Room} />
+                            <PrivateRoute exact path='/room/:roomname' itsRoom={true} component={Room} />
                         </Switch>
                     </div>
                 </Router>
