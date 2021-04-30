@@ -16,7 +16,7 @@ const Room = () => {
     const getRoomData = async () => {
         const sendData = {
             roomName: roomName,
-            userName: user.username
+            userId: user._id
         }
         const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
         const data = res.data;
@@ -73,7 +73,7 @@ const Room = () => {
         e.preventDefault();
         const messagePayload = {
             roomName: roomName,
-            userName: user.username,
+            userId: user._id,
             message: msg,
             recentMessage: msg
         }

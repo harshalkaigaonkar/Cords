@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
-const { randomBytes } = require('crypto');
 const auth = require('../../middleware/auth');
 const Room = require('../../models/RoomSchema');
 const Message = require('../../models/MessageSchema');
@@ -49,13 +48,16 @@ router.post('/joinRoom', auth, async (req, res) => {
 
     try {
 
-        let room = await Room.findOne({ roomname: roomname });
-
+        let room = await Room.findOne({ roomname });
         if (!room) return res.status(203).send({ error: { message: "Room does not exist" } })
 
-        // room = Room.findByIdAndUpdate({roomname:roomname},{users:})
+        room.users.map(user => {
+            if (user === userId) {
+                return res.status(200).send(room);
+            }
+        })
 
-        await room.save();
+        room = await Room.findByIdAndUpdate(room._id, { $addToSet: { users: userId } }, { new: true })
 
         res.status(200).send(room);
     } catch (error) {
@@ -67,37 +69,38 @@ router.post('/joinRoom', auth, async (req, res) => {
 })
 
 router.post('/getRoom', auth, async (req, res) => {
-    const data = req.body;
-    let room = await rooms[data.roomName];
-    if (room) {
-        return res.send(room)
+    try {
+        const { roomname, userId } = req.body;
+        let room = await Room.findOne({ roomname, users: { $elemMatch: { $eq: userId } } });
+        if (!room) return res.send({ error: { message: "room doesn't exist" } });
+
+        res.status(200).send(room);
     }
-    res.send({ error: "room doesn't exist" });
+    catch (err) {
+        console.log(err);
+        res.status(500).send({ error: { message: "Error in Server!" } })
+    }
 })
 
-router.get('/rooms', auth, async (req, res) => {
-    res.send(rooms);
-})
-
-router.post('/message', auth, (req, res) => {
-    const data = req.body;
-    let room = rooms[data.roomName];
-    if (room) {
-        room.recentMessage = data.recentMessage;
-        var msg = {
-            sender: data.userName,
-            message: data.message
-        }
-        room.messages.push(msg);
-        const payload = {
-            roomName: data.roomName,
-            message: data.message,
-            sender: data.userName,
-            users: rooms[data.roomName].users,
-        }
-        return res.send(payload);
+router.post('/message', auth, async (req, res) => {
+    try {
+        const { userId, roomname, message, recentMessage } = req.body;
+        let room = await Room.findOne({ roomname });
+        if (!room) return res.status(200).send({ error: { message: "You cannot send message without being in the room!" } })
+        console.log(room);
+        let msg = new Message({
+            sender: userId,
+            roomname,
+            message,
+        })
+        await msg.save();
+        await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: message }, recentMessage: recentMessage })
+        res.status(200).send(message);
     }
-    res.send({ error: "room doesn't exist" });
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ error: { message: "Error in Server!" } })
+    }
 })
 
 module.exports = router;
