@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
 
     socket.on("send message", (data) => {
 
-        data.users.map(user => {
+        data.roomId.users.map(user => {
             if (user !== data.sender) {
                 socket.to(user).emit("received message", data);
             }

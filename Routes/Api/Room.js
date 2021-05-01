@@ -32,11 +32,11 @@ router.post('/createRoom', auth, async (req, res) => {
         room = new Room(roomData);
 
         await room.save();
-        
+
         res.status(200).send(room);
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: { message: "Error in Server!" } })
+        res.status(203).send({ error: { message: "Error in Server!" } })
     }
 
 })
@@ -63,7 +63,7 @@ router.post('/joinRoom', auth, async (req, res) => {
         res.status(200).send(room);
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: { message: "Error in Server!" } })
+        res.status(203).send({ error: { message: "Error in Server!" } })
     }
 
 
@@ -72,8 +72,8 @@ router.post('/joinRoom', auth, async (req, res) => {
 router.post('/getRoom', auth, async (req, res) => {
     try {
         const { roomname, userId } = req.body;
-        let room = await Room.findOne({ roomname })
-            .populate('messages');
+        console.log(roomname + userId + " getRoom");
+        let room = await Room.findOne({ roomname });
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
@@ -81,7 +81,7 @@ router.post('/getRoom', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).send({ error: { message: "Error in Server!" } })
+        res.status(203).send({ error: { message: "Error in Server!" } })
     }
 })
 
@@ -90,7 +90,7 @@ router.post('/message', auth, async (req, res) => {
         const { userId, roomname, message } = req.body;
         let room = await Room.findOne({ roomname });
         if (!room) return res.status(200).send({ error: { message: "You cannot send message without being in the room!" } })
-    
+
         let msg = new Message({
             roomId: room._id,
             sender: userId,
@@ -98,14 +98,35 @@ router.post('/message', auth, async (req, res) => {
             message,
         })
         await msg.save();
-        msg = await Message.populate(msg, {path: "sender"})
+        msg = await msg.populate("sender").execPopulate();
+        msg = await msg.populate('roomId').execPopulate()
+        msg = await User.populate(msg, { path: "Room.users" })
         await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: msg._id }, recentMessage: msg._id })
         res.status(200).send(msg);
     }
     catch (error) {
         console.log(error);
-        res.status(500).send({ error: { message: "Error in Server!" } })
+        res.status(203).send({ error: { message: "Error in Server!" } })
     }
+})
+
+
+router.post('/getMessages', auth, async (req, res) => {
+    const { roomname, userId } = req.body;
+    try {
+        let room = await Room.findOne({ roomname, users: { $elemMatch: { $eq: userId } } });
+
+        if (!room) return res.status(203).send({ error: { message: "Your are not part of room. Access Denied!" } });
+
+        let messages = await Message.find({ roomId: room._id }).populate('sender');
+
+        res.status(200).send(messages);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(203).send({ error: { message: "Error in Server!" } });
+    }
+
 })
 
 module.exports = router;

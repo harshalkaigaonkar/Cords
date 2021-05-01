@@ -8,6 +8,7 @@ import setAuthToken from './Utils/setAuthToken';
 import Navbar from './components/layout/Navbar';
 import AuthState from './context/auth/AuthState';
 import ErrorState from './context/error/ErrorState';
+import RoomState from './context/room/RoomState';
 import './App.css';
 
 
@@ -18,17 +19,19 @@ const App = () => {
     return (
         <ErrorState>
             <AuthState>
-                <Router>
-                    <div>
-                        <Navbar />
-                        <Switch>
-                            <PrivateRoute exact path='/' component={Homepage} />
-                            <Route exact path='/register' component={Register} />
-                            <Route exact path='/login' component={Login} />
-                            <PrivateRoute exact path='/room/:roomname' itsRoom={true} component={Room} />
-                        </Switch>
-                    </div>
-                </Router>
+                <RoomState>
+                    <Router>
+                        <div>
+                            <Navbar />
+                            <Switch>
+                                <PrivateRoute exact path='/' component={Homepage} />
+                                <Route exact path='/register' component={Register} />
+                                <Route exact path='/login' component={Login} />
+                                <PrivateRoute exact path='/room/:roomname' itsRoom={true} component={Room} />
+                            </Switch>
+                        </div>
+                    </Router>
+                </RoomState>
             </AuthState>
         </ErrorState>
     )

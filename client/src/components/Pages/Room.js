@@ -1,45 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
+import RoomContext from '../../context/room/RoomContext';
+import ErrorContext from '../../context/error/ErrorContext';
 import axios from 'axios';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
 
-var messages = [];
+
 const Room = () => {
     // takes roomname from Query string URL using useParams Hook.
     const roomname = useParams().roomname;
-    console.log(roomname)
+
     const authContext = useContext(AuthContext);
+    const roomContext = useContext(RoomContext);
+    const errorContext = useContext(ErrorContext);
+
     const { user } = authContext;
-    const [Room, setRoom] = useState({});
-    const getRoomData = async () => {
-        const sendData = {
-            roomname: roomname,
-            userId: user._id
-        }
-        const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
-        const data = res.data;
-        if (data.error) {
-            Seterror(data.error.message);
-            return;
-        }
-
-        if (data) {
-            setRoom(data);
-            messages = data.messages;
-        }
-    }
-
-    console.log(messages);
+    const { getRoomData, messages } = roomContext;
+    const { Seterror, error } = errorContext;
 
     useEffect(() => {
-        getRoomData();
+        getRoomData(user, roomname);
         socket.emit('join', user);
 
         socket.on("received message", (message) => {
-            console.log(message);
             addMessageToUi(message);
         })
         // eslint-disable-next-line
@@ -53,12 +39,7 @@ const Room = () => {
         return '';
     };
 
-
-
-
     const [msg, Setmsg] = useState('');
-    const [error, Seterror] = useState('');
-
 
     const addMessageToUi = (message) => {
         var node = document.createElement('li');
@@ -73,6 +54,10 @@ const Room = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (msg === '') {
+            Seterror("please enter something")
+            return;
+        }
         const messagePayload = {
             roomname: roomname,
             userId: user._id,
@@ -81,10 +66,10 @@ const Room = () => {
         const res = await axios.post('http://localhost:3001/api/room/message', messagePayload);
         const data = res.data;
         if (data.error) {
-            return Seterror(data.error);
+            Seterror(data.error.message);
+            return;
         }
         if (data) {
-            data.users = Room.users;
             socket.emit('send message', data);
         }
         addMessageToUi(data);
