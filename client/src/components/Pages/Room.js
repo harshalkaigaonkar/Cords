@@ -22,8 +22,14 @@ const Room = (props) => {
     const [Alert, setAlert] = useState(null);
 
     useEffect(() => {
-        getRoomData(user, roomname);
-        socket.emit('join', user);
+        getRoomData(user, roomname, socket);
+
+        socket.on('user joined', (data) => {
+            setAlert(`${data} joined the room`);
+            setTimeout(() => {
+                setAlert(null);
+            }, 3000)
+        })
 
         socket.on("received message", (message) => {
             addMessageToUi(message);
@@ -37,6 +43,8 @@ const Room = (props) => {
         });
         // eslint-disable-next-line
     }, [])
+
+
 
     const [msg, Setmsg] = useState('');
 

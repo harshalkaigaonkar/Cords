@@ -4,7 +4,8 @@ import RoomReducer from './RoomReducer';
 import axios from 'axios';
 import ErrorContext from '../error/ErrorContext';
 import setAuthToken from '../../Utils/setAuthToken';
-import { SET_MESSAGE, SET_ROOM } from '../type';
+
+import { SET_MESSAGE, SET_ROOM, SOCKET_CONNECTION } from '../type';
 
 const RoomState = (props) => {
 
@@ -14,8 +15,8 @@ const RoomState = (props) => {
     const initialState = {
         roomname: '',
         room: {},
-        messages: []
-
+        messages: [],
+        socket: null
     }
 
     const [state, dispatch] = useReducer(RoomReducer, initialState);
@@ -31,9 +32,15 @@ const RoomState = (props) => {
             type = type === 'getRoom' ? SET_ROOM : SET_MESSAGE;
             dispatch({ type: type, payload: res.data })
         }
+        return res.data;
     }
 
-    const getRoomData = (user, roomname) => {
+    const joinRoom = (room, user, socket) => {
+        console.log(room);
+        socket.emit('join', { room, user })
+    }
+
+    const getRoomData = async (user, roomname, socket) => {
         if (!localStorage.token) {
             return;
         }
@@ -41,8 +48,12 @@ const RoomState = (props) => {
             setAuthToken(localStorage.token);
         }
 
-        makeRequest(roomname, 'getRoom');
+
+        dispatch({ type: SOCKET_CONNECTION, payload: socket });
+
+        const roomData = await makeRequest(roomname, 'getRoom');
         makeRequest(roomname, 'getMessages');
+        joinRoom(roomData, user, socket);
     }
 
     return (
@@ -52,6 +63,7 @@ const RoomState = (props) => {
                 room: state.room,
                 messages: state.messages,
                 getRoomData,
+                socket: state.socket
             }}
         >
             {props.children}

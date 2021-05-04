@@ -97,10 +97,9 @@ router.post('/message', auth, async (req, res) => {
             message,
         })
         await msg.save();
-        msg = await msg.populate("sender").execPopulate();
-        msg = await msg.populate('roomId').execPopulate()
-        msg = await User.populate(msg, { path: "Room.users" })
-        await Room.findByIdAndUpdate(room._id, { $addToSet: { messages: msg._id }, recentMessage: msg._id })
+        msg = await msg.populate({ path: "sender", select: "-password" }).execPopulate();
+        msg = await msg.populate('roomId').execPopulate();
+        await Room.findByIdAndUpdate(room._id, { recentMessage: msg._id })
         res.status(200).send(msg);
     }
     catch (error) {
@@ -118,7 +117,7 @@ router.get('/getMessages', auth, async (req, res) => {
 
         if (!room) return res.status(203).send({ error: { message: "Your are not part of room. Access Denied!" } });
 
-        let messages = await Message.find({ roomId: room._id }).populate('sender');
+        let messages = await Message.find({ roomId: room._id }).populate({ path: "sender", select: "-password" });
 
         res.status(200).send(messages);
     }

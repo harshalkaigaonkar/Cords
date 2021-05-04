@@ -25,8 +25,11 @@ app.use('/api/room', require('./Routes/Api/Room'));
 
 // Real time communication
 io.on('connection', (socket) => {
-    socket.on("join", (user) => {
-        socket.join(user._id);
+    socket.on("join", (data) => {
+        socket.join(data.user._id);
+        data.room.users.map((user) => {
+            socket.to(user).emit('user joined', data.user.username);
+        })
     })
 
     socket.on('disconnect user', (room) => {
