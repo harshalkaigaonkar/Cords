@@ -9,7 +9,7 @@ const User = require('../../models/UserSchema');
 app.use(express.json())
 
 router.post('/createRoom', auth, async (req, res) => {
-    const { roomname, userId } = req.body;
+    const { roomname, userId, public } = req.body;
 
     if (!req.body) return res.status(203).send({ error: { message: "no data found" } });
 
@@ -22,7 +22,8 @@ router.post('/createRoom', auth, async (req, res) => {
             users,
             createdBy: userId,
             roomname: roomname,
-            messages
+            messages,
+            public
         }
 
         let room = await Room.findOne({ roomname: roomname });
@@ -126,6 +127,17 @@ router.get('/getMessages', auth, async (req, res) => {
         res.status(203).send({ error: { message: "Error in Server!" } });
     }
 
+})
+
+router.get('/getPublicRooms', auth, async (req, res) => {
+    const { public } = req.query;
+    try {
+        let rooms = await Room.find({ public });
+        res.status(200).send(rooms);
+    } catch (err) {
+        console.log(err);
+        res.status(203).send({ error: { message: "Error inServer!" } });
+    }
 })
 
 module.exports = router;

@@ -47,10 +47,6 @@ io.on('connection', (socket) => {
             }
         })
     })
-
-    socket.on('disconnect', () => {
-
-    })
 })
 
 Server.listen(PORT, () => console.log(`Server on port ${PORT}`));

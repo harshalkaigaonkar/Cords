@@ -5,7 +5,7 @@ import axios from 'axios';
 import ErrorContext from '../error/ErrorContext';
 import setAuthToken from '../../Utils/setAuthToken';
 
-import { SET_MESSAGE, SET_ROOM, SOCKET_CONNECTION } from '../type';
+import { SET_MESSAGE, SET_ROOM, SOCKET_CONNECTION, PUBLIC_ROOMS } from '../type';
 
 const RoomState = (props) => {
 
@@ -16,6 +16,7 @@ const RoomState = (props) => {
         roomname: '',
         room: {},
         messages: [],
+        publicRooms: [],
         socket: null
     }
 
@@ -56,6 +57,21 @@ const RoomState = (props) => {
         joinRoom(roomData, user, socket);
     }
 
+    const getAllPublicRooms = async () => {
+        if (!localStorage.token) {
+            return;
+        }
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
+        }
+        const res = await axios.get('http://localhost:3001/api/room/getPublicRooms?public=true');
+        const data = res.data;
+        if (data.error) {
+            Seterror(data.error.message);
+            return;
+        }
+        dispatch({ type: PUBLIC_ROOMS, payload: data });
+    }
     return (
         <RoomContext.Provider
             value={{
@@ -63,7 +79,9 @@ const RoomState = (props) => {
                 room: state.room,
                 messages: state.messages,
                 getRoomData,
-                socket: state.socket
+                getAllPublicRooms,
+                socket: state.socket,
+                publicRooms: state.publicRooms
             }}
         >
             {props.children}

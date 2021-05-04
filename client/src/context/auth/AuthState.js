@@ -11,7 +11,7 @@ import { USER_REGISTER, USER_LOGIN, GET_USER, USER_LOGOUT, PUSH_USER, REMOVE_USE
 const AuthState = (props) => {
 
     const errorContext = useContext(ErrorContext);
-    const { setError } = errorContext;
+    const { Seterror } = errorContext;
 
     const initialState = {
         isAuthenticated: false,
@@ -31,7 +31,7 @@ const AuthState = (props) => {
         }
         const res = await axios.get('http://localhost:3001/auth/login');
         if (res.data.error) {
-            setError(res.data.error);
+            Seterror(res.data.error);
             return;
         }
         if (res.data) {
@@ -52,7 +52,7 @@ const AuthState = (props) => {
         }
         const res = await axios.post('http://localhost:3001/auth/register', data, config);
         if (res.data.error) {
-            setError(res.data.error);
+            Seterror(res.data.error);
             return;
         }
         if (res.data) {
@@ -73,7 +73,7 @@ const AuthState = (props) => {
         }
         const res = await axios.post('http://localhost:3001/auth/login', data, config);
         if (res.data.error) {
-            setError(res.data.error);
+            Seterror(res.data.error);
             return;
         }
         if (res.data) {

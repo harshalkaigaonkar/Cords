@@ -1,4 +1,4 @@
-import { SET_ROOM, SET_MESSAGE, SOCKET_CONNECTION } from '../type.js';
+import { SET_ROOM, SET_MESSAGE, SOCKET_CONNECTION, PUBLIC_ROOMS } from '../type.js';
 
 
 const RoomReducer = (state, action) => {
@@ -18,6 +18,11 @@ const RoomReducer = (state, action) => {
             return {
                 ...state,
                 socket: action.payload
+            }
+        case PUBLIC_ROOMS:
+            return {
+                ...state,
+                publicRooms: action.payload
             }
         default:
             return state;

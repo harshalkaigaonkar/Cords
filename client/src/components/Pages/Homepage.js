@@ -2,23 +2,33 @@ import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import AuthContext from '../../context/auth/AuthContext';
 import ErrorContext from '../../context/error/ErrorContext';
+import RoomContext from '../../context/room/RoomContext';
 import setAuthToken from '../../Utils/setAuthToken';
 
 const Homepage = (props) => {
     const authContext = useContext(AuthContext);
     const errorContext = useContext(ErrorContext);
+    const roomContext = useContext(RoomContext);
     const { user, pushUser, removeUser } = authContext;
     const { error, Seterror } = errorContext;
+    const { getAllPublicRooms, publicRooms } = roomContext;
 
     const [roomname, Setroomname] = useState("");
+    const [publicRoom, SetpublicRoom] = useState(true);
 
     useEffect(() => {
+        // this is for user that was connected and push back button
         removeUser();
+        getAllPublicRooms();
         // eslint-disable-next-line
     }, []);
 
     const onSubmit = async (e, type) => {
         e.preventDefault();
+        if (roomname === '') {
+            Seterror('Please enter a room name..');
+            return;
+        }
         if (!localStorage.token) {
             return;
         }
@@ -27,6 +37,7 @@ const Homepage = (props) => {
         }
         const payload = {
             roomname: roomname,
+            public: publicRoom,
             userId: user ? user._id : 'Anonymous',
         }
         var request = await type === "create" ? "createRoom" : "joinRoom";
@@ -44,6 +55,7 @@ const Homepage = (props) => {
     const onRoomChange = (e) => {
         Setroomname(e.target.value);
     }
+
     return (
         <div>
             {error && <h3>{error}</h3>}
@@ -51,6 +63,10 @@ const Homepage = (props) => {
             <h2>Create Room</h2>
             <form onSubmit={(e) => onSubmit(e, "create")}>
                 <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
+                <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(true)} defaultChecked />
+                <label>Public</label>
+                <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(false)} />
+                <label>Private</label>
                 <input type="submit" value="create" />
             </form>
             <h2>Join Room</h2>
@@ -59,6 +75,10 @@ const Homepage = (props) => {
                 <input type="submit" value="join" />
             </form>
             <h2>Public Rooms</h2>
+            {   publicRooms.map((room) => (
+                <p key={room._id}>{room.roomname}</p>
+            ))
+            }
         </div>
     )
 }

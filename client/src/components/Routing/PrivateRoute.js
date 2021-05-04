@@ -9,20 +9,20 @@ const PrivateRoute = ({ component: Component, itsRoom, ...rest }) => {
 
     const { isAuthenticated, inRoom } = authContext;
 
-    if (itsRoom) {
+    if (!itsRoom) {
+        return (
+            <Route {...rest} render={props => isAuthenticated ? (
+                <Component {...props} />
+            ) : (
+                <Redirect to='/login' />
+            )} />
+        )
+    } if (itsRoom)
         return (
             <Route {...rest} render={props => isAuthenticated && inRoom ? (
                 <Component {...props} />
             ) : (
                 <Redirect to='/' />
-            )} />
-        )
-    } else
-        return (
-            <Route {...rest} render={props => !isAuthenticated ? (
-                <Redirect to='/login' />
-            ) : (
-                <Component {...props} />
             )} />
         )
 }
