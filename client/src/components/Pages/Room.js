@@ -8,8 +8,7 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
 
-
-const Room = () => {
+const Room = (props) => {
     // takes roomname from Query string URL using useParams Hook.
     const roomname = useParams().roomname;
 
@@ -17,9 +16,10 @@ const Room = () => {
     const roomContext = useContext(RoomContext);
     const errorContext = useContext(ErrorContext);
 
-    const { user } = authContext;
-    const { getRoomData, messages } = roomContext;
+    const { user, removeUser } = authContext;
+    const { getRoomData, messages, room } = roomContext;
     const { Seterror, error } = errorContext;
+    const [Alert, setAlert] = useState(null);
 
     useEffect(() => {
         getRoomData(user, roomname);
@@ -28,16 +28,15 @@ const Room = () => {
         socket.on("received message", (message) => {
             addMessageToUi(message);
         })
+        socket.on("disconnected user", (user) => {
+
+            setAlert(`${user} left the room`);
+            setTimeout(() => {
+                setAlert(null);
+            }, 3000)
+        });
         // eslint-disable-next-line
     }, [])
-
-    window.onbeforeunload = (e) => {
-        e.preventDefault();
-        if (e) {
-            e.returnValue = '';
-        }
-        return '';
-    };
 
     const [msg, Setmsg] = useState('');
 
@@ -55,7 +54,7 @@ const Room = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         if (msg === '') {
-            Seterror("please enter something")
+            Seterror("please enter something!!")
             return;
         }
         const messagePayload = {
@@ -76,13 +75,21 @@ const Room = () => {
         Setmsg('');
     }
 
+    const onDisconnection = () => {
+        room.username = user.username;
+        room.userId = user._id;
+        socket.emit('disconnect user', room);
+        removeUser();
+    }
+
     const onChange = (e) => {
         Setmsg(e.target.value);
     }
     return (
         <div>
             {error && <h3>{error}</h3>}
-            {/* <h1>{user.username}</h1> */}
+            <div className='logout pointer'>
+            </div>
             <form onSubmit={onSubmit}>
                 <input autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
                 <button>Send</button>
@@ -96,6 +103,8 @@ const Room = () => {
                     ))
                 }
             </ul>
+            {Alert && <h3>{Alert}</h3>}
+            <input type='submit' value='disconnect' onClick={onDisconnection} />
         </div>
     )
 }

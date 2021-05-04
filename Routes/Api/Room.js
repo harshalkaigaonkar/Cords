@@ -69,10 +69,9 @@ router.post('/joinRoom', auth, async (req, res) => {
 
 })
 
-router.post('/getRoom', auth, async (req, res) => {
+router.get('/getRoom', auth, async (req, res) => {
     try {
-        const { roomname, userId } = req.body;
-        console.log(roomname + userId + " getRoom");
+        const { roomname } = req.query;
         let room = await Room.findOne({ roomname });
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
@@ -111,8 +110,9 @@ router.post('/message', auth, async (req, res) => {
 })
 
 
-router.post('/getMessages', auth, async (req, res) => {
-    const { roomname, userId } = req.body;
+router.get('/getMessages', auth, async (req, res) => {
+    const { roomname } = req.query;
+    const userId = req.user.id;
     try {
         let room = await Room.findOne({ roomname, users: { $elemMatch: { $eq: userId } } });
 

@@ -20,45 +20,29 @@ const RoomState = (props) => {
 
     const [state, dispatch] = useReducer(RoomReducer, initialState);
 
-    const getRoomData = async (user, roomname) => {
-        console.log(user + roomname + " getroomData");
+    const makeRequest = async (roomname, type) => {
+        const res = await axios.get(`http://localhost:3001/api/room/${type}?roomname=${roomname}`);
+        const data = res.data;
+        if (data.error) {
+            Seterror(data.error.message);
+            return;
+        }
+        if (res.data) {
+            type = type === 'getRoom' ? SET_ROOM : SET_MESSAGE;
+            dispatch({ type: type, payload: res.data })
+        }
+    }
+
+    const getRoomData = (user, roomname) => {
         if (!localStorage.token) {
             return;
         }
         if (localStorage.token) {
             setAuthToken(localStorage.token);
         }
-        const config = {
-            headers: {
-                'Content-Type': "application/json"
-            }
-        }
-        const Data = {
-            roomname: roomname,
-            userId: user._id
-        }
-        const res = await axios.post('http://localhost:3001/api/room/getRoom', Data, config);
-        const data = res.data;
-        console.log(data);
-        if (data.error) {
-            Seterror(data.error.message);
-            return;
-        }
-        if (res.data) {
-            console.log(res.data)
-            dispatch({ type: SET_ROOM, payload: res.data })
-        }
 
-        const messagesData = await axios.post('http://localhost:3001/api/room/getMessages', Data, config);
-        console.log(messagesData.data);
-        if (messagesData.data.error) {
-            Seterror(messagesData.data.error.message);
-            return;
-        }
-        if (messagesData.data) {
-            console.log(messagesData);
-            dispatch({ type: SET_MESSAGE, payload: messagesData.data })
-        }
+        makeRequest(roomname, 'getRoom');
+        makeRequest(roomname, 'getMessages');
     }
 
     return (
