@@ -11,15 +11,12 @@ const ErrorState = (props) => {
 
     const [state, dispatch] = useReducer(ErrorReducer, initialState);
 
-    const setError = (error) => {
-        if (typeof error.message === 'string')
-            dispatch({ type: SET_ERRORS, payload: error.message });
-        else
-            dispatch({ type: SET_ERRORS, payload: error.message[0].msg });
+    const Seterror = (error) => {
+        dispatch({ type: SET_ERRORS, payload: error });
 
-            setTimeout(() => {
-                clearError();
-            },4000);
+        setTimeout(() => {
+            clearError();
+        }, 4000);
     }
 
     const clearError = () => {
@@ -30,7 +27,7 @@ const ErrorState = (props) => {
         <ErrorContext.Provider
             value={{
                 error: state.error,
-                setError,
+                Seterror,
                 clearError
             }}
         >

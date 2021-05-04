@@ -1,16 +1,21 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import AuthContext from '../../context/auth/AuthContext';
+import ErrorContext from '../../context/error/ErrorContext';
 import setAuthToken from '../../Utils/setAuthToken';
 
 const Homepage = (props) => {
     const authContext = useContext(AuthContext);
-    const { user, pushUser } = authContext;
-
-
+    const errorContext = useContext(ErrorContext);
+    const { user, pushUser, removeUser } = authContext;
+    const { error, Seterror } = errorContext;
 
     const [roomname, Setroomname] = useState("");
-    const [error, Seterror] = useState("");
+
+    useEffect(() => {
+        removeUser();
+        // eslint-disable-next-line
+    }, []);
 
     const onSubmit = async (e, type) => {
         e.preventDefault();

@@ -1,64 +1,44 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
+import RoomContext from '../../context/room/RoomContext';
+import ErrorContext from '../../context/error/ErrorContext';
 import axios from 'axios';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
 
-var messages = [];
-const Room = () => {
+const Room = (props) => {
     // takes roomname from Query string URL using useParams Hook.
     const roomname = useParams().roomname;
-    console.log(roomname)
+
     const authContext = useContext(AuthContext);
-    const { user } = authContext;
-    const [Room, setRoom] = useState({});
-    const getRoomData = async () => {
-        const sendData = {
-            roomname: roomname,
-            userId: user._id
-        }
-        const res = await axios.post('http://localhost:3001/api/room/getRoom', sendData);
-        const data = res.data;
-        if (data.error) {
-            Seterror(data.error.message);
-            return;
-        }
+    const roomContext = useContext(RoomContext);
+    const errorContext = useContext(ErrorContext);
 
-        if (data) {
-            setRoom(data);
-            messages = data.messages;
-        }
-    }
-
-    console.log(messages);
+    const { user, removeUser } = authContext;
+    const { getRoomData, messages, room } = roomContext;
+    const { Seterror, error } = errorContext;
+    const [Alert, setAlert] = useState(null);
 
     useEffect(() => {
-        getRoomData();
+        getRoomData(user, roomname);
         socket.emit('join', user);
 
         socket.on("received message", (message) => {
-            console.log(message);
             addMessageToUi(message);
         })
+        socket.on("disconnected user", (user) => {
+
+            setAlert(`${user} left the room`);
+            setTimeout(() => {
+                setAlert(null);
+            }, 3000)
+        });
         // eslint-disable-next-line
     }, [])
 
-    window.onbeforeunload = (e) => {
-        e.preventDefault();
-        if (e) {
-            e.returnValue = '';
-        }
-        return '';
-    };
-
-
-
-
     const [msg, Setmsg] = useState('');
-    const [error, Seterror] = useState('');
-
 
     const addMessageToUi = (message) => {
         var node = document.createElement('li');
@@ -73,6 +53,10 @@ const Room = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (msg === '') {
+            Seterror("please enter something!!")
+            return;
+        }
         const messagePayload = {
             roomname: roomname,
             userId: user._id,
@@ -81,14 +65,21 @@ const Room = () => {
         const res = await axios.post('http://localhost:3001/api/room/message', messagePayload);
         const data = res.data;
         if (data.error) {
-            return Seterror(data.error);
+            Seterror(data.error.message);
+            return;
         }
         if (data) {
-            data.users = Room.users;
             socket.emit('send message', data);
         }
         addMessageToUi(data);
         Setmsg('');
+    }
+
+    const onDisconnection = () => {
+        room.username = user.username;
+        room.userId = user._id;
+        socket.emit('disconnect user', room);
+        removeUser();
     }
 
     const onChange = (e) => {
@@ -97,7 +88,8 @@ const Room = () => {
     return (
         <div>
             {error && <h3>{error}</h3>}
-            {/* <h1>{user.username}</h1> */}
+            <div className='logout pointer'>
+            </div>
             <form onSubmit={onSubmit}>
                 <input autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
                 <button>Send</button>
@@ -111,6 +103,8 @@ const Room = () => {
                     ))
                 }
             </ul>
+            {Alert && <h3>{Alert}</h3>}
+            <input type='submit' value='disconnect' onClick={onDisconnection} />
         </div>
     )
 }
