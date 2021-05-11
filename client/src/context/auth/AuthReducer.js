@@ -9,13 +9,15 @@ const AuthReducer = (state, action) => {
             return {
                 ...state,
                 ...action.payload,
-                isAuthenticated: true
+                isAuthenticated: true,
+                loading: false
             };
         case GET_USER:
             return {
                 ...state,
                 user: action.payload,
-                isAuthenticated: true
+                isAuthenticated: true,
+                loading: false
             };
         case PUSH_USER:
             return {
@@ -25,14 +27,17 @@ const AuthReducer = (state, action) => {
         case REMOVE_USER:
             return {
                 ...state,
-                inRoom: false
+                inRoom: false,
+                socket: null,
+
             };
         case USER_LOGOUT:
             localStorage.removeItem('token')
             return {
                 ...state,
                 user: null,
-                isAuthenticated: false
+                isAuthenticated: false,
+                loading: false
             };
         default:
             return state;

@@ -1,15 +1,16 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import AuthContext from '../../context/auth/AuthContext';
 import ErrorContext from '../../context/error/ErrorContext';
 import RoomContext from '../../context/room/RoomContext';
 import setAuthToken from '../../Utils/setAuthToken';
+import Spinner from '../layout/Spinner'
 
 const Homepage = (props) => {
     const authContext = useContext(AuthContext);
     const errorContext = useContext(ErrorContext);
     const roomContext = useContext(RoomContext);
-    const { user, pushUser, removeUser } = authContext;
+    const { user, pushUser, removeUser, loading } = authContext;
     const { error, Seterror } = errorContext;
     const { getAllPublicRooms, publicRooms } = roomContext;
 
@@ -58,27 +59,31 @@ const Homepage = (props) => {
 
     return (
         <div>
-            {error && <h3>{error}</h3>}
-            {user && <h3>{user.name}</h3>}
-            <h2>Create Room</h2>
-            <form onSubmit={(e) => onSubmit(e, "create")}>
-                <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
-                <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(true)} defaultChecked />
-                <label>Public</label>
-                <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(false)} />
-                <label>Private</label>
-                <input type="submit" value="create" />
-            </form>
-            <h2>Join Room</h2>
-            <form onSubmit={(e) => onSubmit(e, "join")}>
-                <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
-                <input type="submit" value="join" />
-            </form>
-            <h2>Public Rooms</h2>
-            {   publicRooms.map((room) => (
-                <p key={room._id}>{room.roomname}</p>
-            ))
-            }
+            {user !== null && !loading ? (
+                <Fragment>
+                    {error && <h3>{error}</h3>}
+                    {user && <h3>{user.name}</h3>}
+                    <h2>Create Room</h2>
+                    <form onSubmit={(e) => onSubmit(e, "create")}>
+                        <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
+                        <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(true)} defaultChecked />
+                        <label>Public</label>
+                        <input type="radio" name="roomType" value={publicRoom} onChange={() => SetpublicRoom(false)} />
+                        <label>Private</label>
+                        <input type="submit" value="create" />
+                    </form>
+                    <h2>Join Room</h2>
+                    <form onSubmit={(e) => onSubmit(e, "join")}>
+                        <input type="text" name="room_name" placeholder="room name" onChange={onRoomChange} />
+                        <input type="submit" value="join" />
+                    </form>
+                    <h2>Public Rooms</h2>
+                    {   publicRooms.map((room) => (
+                        <p key={room._id}>{room.roomname}</p>
+                    ))
+                    }
+                </Fragment>
+            ) : (<Spinner />)}
         </div>
     )
 }

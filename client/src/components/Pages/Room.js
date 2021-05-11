@@ -88,6 +88,7 @@ const Room = (props) => {
         room.userId = user._id;
         socket.emit('disconnect user', room);
         removeUser();
+        props.history.push('/')
     }
 
     const onChange = (e) => {
