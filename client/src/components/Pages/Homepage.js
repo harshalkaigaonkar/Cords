@@ -10,7 +10,7 @@ const Homepage = (props) => {
     const authContext = useContext(AuthContext);
     const errorContext = useContext(ErrorContext);
     const roomContext = useContext(RoomContext);
-    const { user, pushUser, removeUser, loading } = authContext;
+    const { user, pushUser, removeUser, loading, isAuthenticated } = authContext;
     const { error, Seterror } = errorContext;
     const { getAllPublicRooms, publicRooms } = roomContext;
 
@@ -18,6 +18,7 @@ const Homepage = (props) => {
     const [publicRoom, SetpublicRoom] = useState(true);
 
     useEffect(() => {
+        if (!localStorage.token) props.history.push('/login');
         // this is for user that was connected and push back button
         removeUser();
         getAllPublicRooms();
