@@ -25,6 +25,10 @@ app.use('/api/room', require('./Routes/Api/Room'));
 
 // Real time communication
 io.on('connection', (socket) => {
+    socket.on("join user",(data) => {
+        socket.join(data.user.username)
+    })
+
     socket.on("join", (data) => {
         socket.join(data.room.roomname);
         // data.room.users.map((user) => {
@@ -37,18 +41,19 @@ io.on('connection', (socket) => {
         // room.users.map(user => {
         //     socket.to(user).emit('disconnected user', (room.username))
         // });
+        console.log(room)
         socket.to(room.roomname).emit('disconnected user', (room.username))
-        socket.leave(room.roomname);
+        socket.leave(room.username);
     })
 
     socket.on("send message", (data) => {
+        socket.to(data.roomname).emit("received message", data);
 
         // data.roomId.users.map(user => {
         //     if (user !== data.sender) {
-        //         socket.to(user).emit("received message", data);
         //     }
         // })
-        socket.to()
+        // socket.to()
     })
 })
 
