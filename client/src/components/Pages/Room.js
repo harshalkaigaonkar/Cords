@@ -72,7 +72,9 @@ const Room = (props) => {
         }
         const res = await axios.post('http://localhost:3001/api/room/message', messagePayload);
         const data = res.data;
+        console.log(data)
         if (data.error) {
+            console.log(data)
             Seterror(data.error.message);
             return;
         }

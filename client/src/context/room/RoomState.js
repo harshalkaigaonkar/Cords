@@ -38,6 +38,7 @@ const RoomState = (props) => {
 
     const joinRoom = (room, user, socket) => {
         console.log(room);
+        socket.emit('join user', { room, user })
         socket.emit('join', { room, user })
     }
 
