@@ -48,10 +48,7 @@ const RoomState = (props) => {
         if (localStorage.token) {
             setAuthToken(localStorage.token);
         }
-
-
         dispatch({ type: SOCKET_CONNECTION, payload: socket });
-
         const roomData = await makeRequest(roomname, 'getRoom');
         makeRequest(roomname, 'getMessages');
         joinRoom(roomData, user, socket);
@@ -78,10 +75,10 @@ const RoomState = (props) => {
                 roomname: state.roomname,
                 room: state.room,
                 messages: state.messages,
-                getRoomData,
-                getAllPublicRooms,
                 socket: state.socket,
-                publicRooms: state.publicRooms
+                publicRooms: state.publicRooms,
+                getRoomData,
+                getAllPublicRooms
             }}
         >
             {props.children}

@@ -29,7 +29,6 @@ const AuthReducer = (state, action) => {
                 ...state,
                 inRoom: false,
                 socket: null,
-
             };
         case USER_LOGOUT:
             localStorage.removeItem('token')

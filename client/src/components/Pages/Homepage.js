@@ -10,7 +10,7 @@ const Homepage = (props) => {
     const authContext = useContext(AuthContext);
     const errorContext = useContext(ErrorContext);
     const roomContext = useContext(RoomContext);
-    const { user, pushUser, removeUser, loading, isAuthenticated } = authContext;
+    const { user, pushUser, removeUser, loading } = authContext;
     const { error, Seterror } = errorContext;
     const { getAllPublicRooms, publicRooms } = roomContext;
 

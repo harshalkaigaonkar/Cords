@@ -83,9 +83,10 @@ const Room = (props) => {
         Setmsg('');
     }
 
-    const onDisconnection = () => {
+    const onDisconnection = (e) => {
+        e.preventDefault();
         room.username = user.username;
-        room.userId = user._id;
+        room.roomname = roomname;
         socket.emit('disconnect user', room);
         removeUser();
         props.history.push('/')
@@ -97,6 +98,7 @@ const Room = (props) => {
     return (
         <div>
             {error && <h3>{error}</h3>}
+            <h2>{roomname}</h2>
             <div className='logout pointer'>
             </div>
             <form onSubmit={onSubmit}>
