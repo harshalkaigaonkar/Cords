@@ -10,11 +10,13 @@ const Login = (props) => {
     const { error } = errorContext;
 
     useEffect(() => {
-        if (isAuthenticated && localStorage.getItem('token') !== undefined) {
+        if (isAuthenticated) {
             props.history.push('/');
         }
         // eslint-disable-next-line
     }, [props.history, isAuthenticated])
+
+
     const [email, Setemail] = useState("");
     const [password, Setpassword] = useState("");
     const onSubmit = async (e) => {

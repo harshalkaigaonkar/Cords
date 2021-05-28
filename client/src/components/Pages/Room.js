@@ -22,8 +22,14 @@ const Room = (props) => {
     const [Alert, setAlert] = useState(null);
 
     useEffect(() => {
-        getRoomData(user, roomname);
-        socket.emit('join', user);
+        getRoomData(user, roomname, socket);
+
+        socket.on('user joined', (data) => {
+            setAlert(`${data} joined the room`);
+            setTimeout(() => {
+                setAlert(null);
+            }, 3000)
+        })
 
         socket.on("received message", (message) => {
             addMessageToUi(message);
@@ -37,6 +43,8 @@ const Room = (props) => {
         });
         // eslint-disable-next-line
     }, [])
+
+
 
     const [msg, Setmsg] = useState('');
 
@@ -75,11 +83,13 @@ const Room = (props) => {
         Setmsg('');
     }
 
-    const onDisconnection = () => {
+    const onDisconnection = (e) => {
+        e.preventDefault();
         room.username = user.username;
-        room.userId = user._id;
+        room.roomname = roomname;
         socket.emit('disconnect user', room);
         removeUser();
+        props.history.push('/')
     }
 
     const onChange = (e) => {
@@ -88,6 +98,7 @@ const Room = (props) => {
     return (
         <div>
             {error && <h3>{error}</h3>}
+            <h2>{roomname}</h2>
             <div className='logout pointer'>
             </div>
             <form onSubmit={onSubmit}>

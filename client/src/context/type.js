@@ -8,4 +8,6 @@ export const SET_ERRORS = "SET_ERRORS";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
 export const SET_MESSAGE = "SET_MESSAGE";
 export const SET_ROOM = "SET_ROOM";
+export const SOCKET_CONNECTION = "SOCKET_CONNECTION";
+export const PUBLIC_ROOMS = "PUBLIC_ROOMS";
 

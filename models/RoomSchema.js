@@ -21,6 +21,11 @@ const Room = mongoose.Schema({
     recentMessage: {
         type: Schema.Types.ObjectId,
         ref: 'Message'
+    },
+    public: {
+        type: Boolean,
+        required: true,
+        default: true
     }
 }, { timestamps: true })
 
