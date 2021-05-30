@@ -26,7 +26,6 @@ const App = () => {
                         <Fragment>
                             <Navbar />
                             <div>
-
                                 <Switch>
                                     <PrivateRoute exact path='/' component={Homepage} />
                                     <Route exact path='/register' component={Register} />

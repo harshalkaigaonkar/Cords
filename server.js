@@ -14,7 +14,6 @@ const Server = http.createServer(app);
 const io = socketio(Server, {
     cors: {
         origin: "http://localhost:3000",
-        methods: ["GET", "POST", "PUT", "DELETE"]
     }
 });
 
@@ -25,36 +24,31 @@ app.use('/api/room', require('./Routes/Api/Room'));
 
 // Real time communication
 io.on('connection', (socket) => {
-    socket.on("join user",(data) => {
-        socket.join(data.user.username)
-    })
 
-    socket.on("join", (data) => {
+    socket.on("join user", (data) => {
+        // now if and only if user is joined in a room, he is able to access these connections
         socket.join(data.room.roomname);
-        // data.room.users.map((user) => {
-        //     socket.to(user).emit('user joined', data.user.username);
-        // })
-        socket.to(data.room.roomname).emit('user joined', data.user.username);
+        socket.broadcast.emit('user joined', data.user.username);
+        socket.on("send message", (data) => {
+            socket.to(data.roomname).emit('received message', data)
+        })
+        socket.on('disconnect', () => {
+            socket.to(data.room.roomname).emit('disconnected user', (data.user.username))
+        })
     })
 
-    socket.on('disconnect user', (room) => {
-        // room.users.map(user => {
-        //     socket.to(user).emit('disconnected user', (room.username))
-        // });
-        console.log(room)
-        socket.to(room.roomname).emit('disconnected user', (room.username))
-        socket.leave(room.username);
-    })
+    // socket.on('callUser', (data) => {
+    //     io.to(data.userToCall).emit('callUser', {
+    //         signal: data.signalData,
+    //         from: data.from,
+    //         name: data.name
+    //     })
+    // })
 
-    socket.on("send message", (data) => {
-        socket.to(data.roomname).emit("received message", data);
+    // socket.on("answerCall", (data) => {
+    //     io.to(data.to).emit('callAccepted', data.signal);
+    // })
 
-        // data.roomId.users.map(user => {
-        //     if (user !== data.sender) {
-        //     }
-        // })
-        // socket.to()
-    })
 })
 
 Server.listen(PORT, () => console.log(`Server on port ${PORT}`));

@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import RoomContext from '../../context/room/RoomContext';
 import ErrorContext from '../../context/error/ErrorContext';
 import axios from 'axios';
+import Peer from 'peerjs';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
@@ -19,34 +20,54 @@ const Room = (props) => {
     const { user, removeUser } = authContext;
     const { getRoomData, messages, room } = roomContext;
     const { Seterror, error } = errorContext;
-    const [Alert, setAlert] = useState(null);
+
+    const [msg, Setmsg] = useState("");
+    const [Alert, SetAlert] = useState(null);
+    const [stream, Setstream] = useState(null);
+    const [RecievingCall, SetRecievingCall] = useState(false);
+    const [Caller, SetCaller] = useState("");
+    const [CallerSignal, SetCallerSignal] = useState();
+    const [CallAccepted, SetCallAccepted] = useState(false);
+    const [IdToCall, SetIdToCall] = useState("");
+    const [CallEnded, SetCallEnded] = useState(false);
+    const [Name, SetName] = useState("");
+
+    const myVideo = useRef();
+    const userVideo = useRef();
+    const connectionRef = useRef();
 
     useEffect(() => {
+
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            Setstream(stream);
+            myVideo.current.srcObject = stream;
+        });
+
         getRoomData(user, roomname, socket);
 
         socket.on('user joined', (data) => {
-            setAlert(`${data} joined the room`);
+            SetAlert(`${data} joined the room`);
             setTimeout(() => {
-                setAlert(null);
+                SetAlert(null);
             }, 3000)
         })
 
         socket.on("received message", (message) => {
-            addMessageToUi(message);
+            if (message.roomname === roomname) {
+                addMessageToUi(message);
+            }
         })
         socket.on("disconnected user", (user) => {
 
-            setAlert(`${user} left the room`);
+            SetAlert(`${user} left the room`);
             setTimeout(() => {
-                setAlert(null);
+                SetAlert(null);
             }, 3000)
         });
+
         // eslint-disable-next-line
     }, [])
 
-
-
-    const [msg, Setmsg] = useState('');
 
     const addMessageToUi = (message) => {
         var node = document.createElement('li');
@@ -87,11 +108,8 @@ const Room = (props) => {
 
     const onDisconnection = (e) => {
         e.preventDefault();
-        room.username = user.username;
-        room.roomname = roomname;
-        socket.emit('disconnect user', room);
         removeUser();
-        props.history.push('/')
+        window.location = '/';
     }
 
     const onChange = (e) => {
@@ -101,7 +119,10 @@ const Room = (props) => {
         <div>
             {error && <h3>{error}</h3>}
             <h2>{roomname}</h2>
-            <div className='logout pointer'>
+            <input type='submit' value='disconnect' onClick={onDisconnection} />
+            {Alert && <h3>{Alert}</h3>}
+            <div>
+                {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
             </div>
             <form onSubmit={onSubmit}>
                 <input autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
@@ -116,8 +137,6 @@ const Room = (props) => {
                     ))
                 }
             </ul>
-            {Alert && <h3>{Alert}</h3>}
-            <input type='submit' value='disconnect' onClick={onDisconnection} />
         </div>
     )
 }

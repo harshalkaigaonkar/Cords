@@ -73,7 +73,7 @@ const AuthState = (props) => {
             return;
         }
         const res = await axios.post('http://localhost:3001/auth/login', data, config);
-        if (res.data.error) {
+        if (res.data && res.data.error) {
             Seterror(res.data.error);
             return;
         }
