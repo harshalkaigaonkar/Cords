@@ -6,7 +6,8 @@ const RoomReducer = (state, action) => {
         case SET_ROOM:
             return {
                 ...state,
-                room: action.payload,
+                room: action.payload.room,
+                activeUsers: action.payload.activeUsers,
                 roomname: action.payload.roomname
             };
         case SET_MESSAGE:

@@ -4,7 +4,6 @@ import AuthContext from '../../context/auth/AuthContext';
 import RoomContext from '../../context/room/RoomContext';
 import ErrorContext from '../../context/error/ErrorContext';
 import axios from 'axios';
-import Peer from 'peerjs';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3001');
@@ -18,7 +17,7 @@ const Room = (props) => {
     const errorContext = useContext(ErrorContext);
 
     const { user, removeUser } = authContext;
-    const { getRoomData, messages, room } = roomContext;
+    const { getRoomData, messages, room, activeUsers } = roomContext;
     const { Seterror, error } = errorContext;
 
     const [msg, Setmsg] = useState("");
@@ -64,7 +63,7 @@ const Room = (props) => {
                 SetAlert(null);
             }, 3000)
         });
-
+        console.log(activeUsers);
         // eslint-disable-next-line
     }, [])
 
@@ -108,6 +107,7 @@ const Room = (props) => {
 
     const onDisconnection = (e) => {
         e.preventDefault();
+        const res = axios.post("http://localhost:3001/api/room/leaveRoom", { roomname, userId: user._id });
         removeUser();
         window.location = '/';
     }
@@ -115,10 +115,19 @@ const Room = (props) => {
     const onChange = (e) => {
         Setmsg(e.target.value);
     }
+    const showUsers = () => {
+
+    }
     return (
         <div>
             {error && <h3>{error}</h3>}
             <h2>{roomname}</h2>
+            <button onClick={showUsers}>show active users</button>
+            {activeUsers &&
+                activeUsers.map(user => {
+                    <h1> {user} </h1>
+                })
+            }
             <input type='submit' value='disconnect' onClick={onDisconnection} />
             {Alert && <h3>{Alert}</h3>}
             <div>
