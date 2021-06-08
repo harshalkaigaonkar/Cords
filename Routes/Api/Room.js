@@ -66,7 +66,6 @@ router.post('/joinRoom', auth, async (req, res) => {
         room = await Room.findByIdAndUpdate(room._id, { $addToSet: { users: userId } }, { new: true });
 
         rooms[roomname].users.push(userId);
-        console.log(rooms[roomname])
         res.status(200).send(room);
     } catch (error) {
         console.log(error);
@@ -79,12 +78,11 @@ router.post('/joinRoom', auth, async (req, res) => {
 router.post('/leaveRoom', auth, (req, res) => {
     try {
         const { roomname, userId } = req;
-        let room = rooms[roomname];
+        
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
-        const index = room.users.findIndex(userId);
-        rooms.users.splice(index, 1);
+        rooms = rooms[roomname].users.filter(user => user != userId);
     }
     catch (err) {
         console.log(err);
@@ -109,6 +107,22 @@ router.get('/getRoom', auth, async (req, res) => {
     }
 })
 
+router.get('/getActiveUsers', auth, async (req, res) => {
+    try {
+        const { roomname } = req.query;
+        let room = rooms[roomname];
+
+        if (!room) return res.send({ error: { message: "room doesn't exist" } });
+
+        activeUsers = rooms[roomname].users;
+        console.log(activeUsers)
+        res.status(200).send(activeUsers);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(203).send({ error: { message: "Error in Server!" } })
+    }
+})
 
 
 router.post('/message', auth, async (req, res) => {
@@ -166,4 +180,4 @@ router.get('/getPublicRooms', auth, async (req, res) => {
     }
 })
 
-module.exports = router;
+module.exports = {router,rooms};

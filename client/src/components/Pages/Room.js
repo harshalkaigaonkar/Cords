@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import RoomContext from '../../context/room/RoomContext';
 import ErrorContext from '../../context/error/ErrorContext';
+import setAuthToken from '../../Utils/setAuthToken';
 import axios from 'axios';
 import io from 'socket.io-client';
 
@@ -17,10 +18,11 @@ const Room = (props) => {
     const errorContext = useContext(ErrorContext);
 
     const { user, removeUser } = authContext;
-    const { getRoomData, messages, room, activeUsers } = roomContext;
+    const { getRoomData, messages, room } = roomContext;
     const { Seterror, error } = errorContext;
 
     const [msg, Setmsg] = useState("");
+    const [activeUsers, SetactiveUsers] = useState('');
     const [Alert, SetAlert] = useState(null);
     const [stream, Setstream] = useState(null);
     const [RecievingCall, SetRecievingCall] = useState(false);
@@ -63,7 +65,6 @@ const Room = (props) => {
                 SetAlert(null);
             }, 3000)
         });
-        console.log(activeUsers);
         // eslint-disable-next-line
     }, [])
 
@@ -105,9 +106,9 @@ const Room = (props) => {
         Setmsg('');
     }
 
-    const onDisconnection = (e) => {
+    const onDisconnection = async(e) => {
         e.preventDefault();
-        const res = axios.post("http://localhost:3001/api/room/leaveRoom", { roomname, userId: user._id });
+        const res = await axios.post("http://localhost:3001/api/room/leaveRoom", { roomname, userId: user._id });
         removeUser();
         window.location = '/';
     }
@@ -115,21 +116,30 @@ const Room = (props) => {
     const onChange = (e) => {
         Setmsg(e.target.value);
     }
-    const showUsers = () => {
-
+    const showUsers = async () => {
+        if (!localStorage.token) {
+            return;
+        }
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
+        }
+        const res = await axios.get(`http://localhost:3001/api/room/getActiveUsers?roomname=${roomname}`);
+        SetactiveUsers(res.data);
+        console.log(res);
     }
     return (
         <div>
             {error && <h3>{error}</h3>}
             <h2>{roomname}</h2>
             <button onClick={showUsers}>show active users</button>
+            
+            <input type='submit' value='disconnect' onClick={onDisconnection} />
+            {Alert && <h3>{Alert}</h3>}
             {activeUsers &&
                 activeUsers.map(user => {
                     <h1> {user} </h1>
                 })
             }
-            <input type='submit' value='disconnect' onClick={onDisconnection} />
-            {Alert && <h3>{Alert}</h3>}
             <div>
                 {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
             </div>
