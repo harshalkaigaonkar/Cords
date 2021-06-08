@@ -15,7 +15,6 @@ const RoomState = (props) => {
     const initialState = {
         roomname: '',
         room: {},
-        // activeUsers: [],
         messages: [],
         publicRooms: [],
         socket: null
@@ -75,7 +74,6 @@ const RoomState = (props) => {
             value={{
                 roomname: state.roomname,
                 room: state.room,
-                // activeUsers: state.activeUsers,
                 messages: state.messages,
                 socket: state.socket,
                 publicRooms: state.publicRooms,

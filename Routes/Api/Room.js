@@ -8,8 +8,6 @@ const User = require('../../models/UserSchema');
 
 app.use(express.json())
 
-// const rooms = {};
-
 router.post('/createRoom', auth, async (req, res) => {
     const { roomname, userId, public } = req.body;
 
@@ -35,8 +33,6 @@ router.post('/createRoom', auth, async (req, res) => {
         room = new Room(roomData);
 
         await room.save();
-
-        // rooms[roomname] = roomData;
 
         res.status(200).send(room);
     } catch (error) {
@@ -65,7 +61,6 @@ router.post('/joinRoom', auth, async (req, res) => {
 
         room = await Room.findByIdAndUpdate(room._id, { $addToSet: { users: userId } }, { new: true });
 
-        // rooms[roomname].users.push(userId);
         res.status(200).send(room);
     } catch (error) {
         console.log(error);
@@ -75,24 +70,6 @@ router.post('/joinRoom', auth, async (req, res) => {
 
 })
 
-// router.post('/leaveRoom', auth, (req, res) => {
-//     try {
-//         const { roomname, userId } = req.body;
-//         const room = rooms[roomname];
-//         console.log(roomname)
-//         if (!room) return res.send({ error: { message: "room doesn't exist" } });
-
-//         rooms[roomname].users = rooms[roomname].users.filter(user => user !== userId);
-//         console.log(rooms[roomname])
-
-//         res.status(200).send("success");
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(203).send({ error: { message: "Error in Server!" } })
-//     }
-// })
-
 router.get('/getRoom', auth, async (req, res) => {
     try {
         const { roomname } = req.query;
@@ -100,30 +77,15 @@ router.get('/getRoom', auth, async (req, res) => {
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
-        res.status(200).send(room);
+        activeUsers = rooms[roomname].users;
+
+        res.status(200).send({ room, activeUsers });
     }
     catch (err) {
         console.log(err);
         res.status(203).send({ error: { message: "Error in Server!" } })
     }
 })
-
-// router.get('/getActiveUsers', auth, async (req, res) => {
-//     try {
-//         const { roomname } = req.query;
-//         let room = rooms[roomname];
-
-//         if (!room) return res.send({ error: { message: "room doesn't exist" } });
-
-//         activeUsers = rooms[roomname].users;
-//         console.log(activeUsers)
-//         res.status(200).send(activeUsers);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(203).send({ error: { message: "Error in Server!" } })
-//     }
-// })
 
 
 router.post('/message', auth, async (req, res) => {

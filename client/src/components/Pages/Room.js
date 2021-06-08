@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import RoomContext from '../../context/room/RoomContext';
 import ErrorContext from '../../context/error/ErrorContext';
-import setAuthToken from '../../Utils/setAuthToken';
 import axios from 'axios';
 import io from 'socket.io-client';
 
@@ -18,26 +17,28 @@ const Room = (props) => {
     const errorContext = useContext(ErrorContext);
 
     const { user, removeUser } = authContext;
-    const { getRoomData, messages, room } = roomContext;
+    const { getRoomData, messages } = roomContext;
     const { Seterror, error } = errorContext;
 
     const [msg, Setmsg] = useState("");
-    // const [activeUsers, SetactiveUsers] = useState([]);
     const [Alert, SetAlert] = useState(null);
     const [stream, Setstream] = useState(null);
-    const [RecievingCall, SetRecievingCall] = useState(false);
-    const [Caller, SetCaller] = useState("");
-    const [CallerSignal, SetCallerSignal] = useState();
-    const [CallAccepted, SetCallAccepted] = useState(false);
-    const [IdToCall, SetIdToCall] = useState("");
-    const [CallEnded, SetCallEnded] = useState(false);
-    const [Name, SetName] = useState("");
+    // const [RecievingCall, SetRecievingCall] = useState(false);
+    // const [Caller, SetCaller] = useState("");
+    // const [CallerSignal, SetCallerSignal] = useState();
+    // const [CallAccepted, SetCallAccepted] = useState(false);
+    // const [IdToCall, SetIdToCall] = useState("");
+    // const [CallEnded, SetCallEnded] = useState(false);
+    // const [Name, SetName] = useState("");
 
     const myVideo = useRef();
-    const userVideo = useRef();
-    const connectionRef = useRef();
+    // const userVideo = useRef();
+    // const connectionRef = useRef();
+    const activeUsers = useRef();
 
     useEffect(() => {
+
+
 
         navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
             Setstream(stream);
@@ -47,7 +48,8 @@ const Room = (props) => {
         getRoomData(user, roomname, socket);
 
         socket.on('user joined', (data) => {
-            SetAlert(`${data} joined the room`);
+            activeUsers.current = data.users;
+            SetAlert(`${data.name} joined the room`);
             setTimeout(() => {
                 SetAlert(null);
             }, 3000)
@@ -58,13 +60,18 @@ const Room = (props) => {
                 addMessageToUi(message);
             }
         })
-        socket.on("disconnected user", (user) => {
-
-            SetAlert(`${user} left the room`);
+        socket.on("disconnected user", (data) => {
+            activeUsers.current = data.users;
+            SetAlert(`${data.name} left the room`);
             setTimeout(() => {
                 SetAlert(null);
             }, 3000)
         });
+        socket.on('get all active users', (data) => {
+            if (data !== undefined) {
+                activeUsers.current = data;
+            }
+        })
         // eslint-disable-next-line
     }, [])
 
@@ -108,7 +115,6 @@ const Room = (props) => {
 
     const onDisconnection = async (e) => {
         e.preventDefault();
-        // const res = await axios.post("http://localhost:3001/api/room/leaveRoom", { roomname: roomname, userId: user._id });
         removeUser();
         window.location = '/';
     }
@@ -116,29 +122,17 @@ const Room = (props) => {
     const onChange = (e) => {
         Setmsg(e.target.value);
     }
-    // const showUsers = async () => {
-    //     if (!localStorage.token) {
-    //         return;
-    //     }
-    //     if (localStorage.token) {
-    //         setAuthToken(localStorage.token);
-    //     }
-    //     const res = await axios.get(`http://localhost:3001/api/room/getActiveUsers?roomname=${roomname}`);
-    //     SetactiveUsers(res.data);
-    //     console.log(res);
-    // }
     return (
         <div>
             {error && <h3>{error}</h3>}
             <h2>{roomname}</h2>
-
             <input type='submit' value='disconnect' onClick={onDisconnection} />
             {Alert && <h3>{Alert}</h3>}
-            {/* {activeUsers &&
-                activeUsers.map(user => (
-                    <h1> {user} </h1>
+            {activeUsers.current &&
+                activeUsers.current.map(user => (
+                    <h5 key={user.socketId}> {user.name} </h5>
                 ))
-            } */}
+            }
             <div>
                 {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
             </div>
