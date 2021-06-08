@@ -108,7 +108,7 @@ const Room = (props) => {
 
     const onDisconnection = async(e) => {
         e.preventDefault();
-        const res = await axios.post("http://localhost:3001/api/room/leaveRoom", { roomname, userId: user._id });
+        const res = await axios.post("http://localhost:3001/api/room/leaveRoom", { roomname:roomname, userId: user._id });
         removeUser();
         window.location = '/';
     }
@@ -136,9 +136,9 @@ const Room = (props) => {
             <input type='submit' value='disconnect' onClick={onDisconnection} />
             {Alert && <h3>{Alert}</h3>}
             {activeUsers &&
-                activeUsers.map(user => {
+                activeUsers.map(user => ( 
                     <h1> {user} </h1>
-                })
+                ))
             }
             <div>
                 {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
