@@ -77,12 +77,15 @@ router.post('/joinRoom', auth, async (req, res) => {
 
 router.post('/leaveRoom', auth, (req, res) => {
     try {
-        const { roomname, userId } = req;
-        
-
+        const { roomname, userId } = req.body;
+        const room = rooms[roomname];
+        console.log(roomname)
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
-        rooms = rooms[roomname].users.filter(user => user != userId);
+        rooms[roomname].users = rooms[roomname].users.filter(user => user !== userId);
+        console.log(rooms[roomname])
+
+        res.status(200).send("success");
     }
     catch (err) {
         console.log(err);
@@ -97,9 +100,7 @@ router.get('/getRoom', auth, async (req, res) => {
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
-        activeUsers = rooms[roomname].users;
-
-        res.status(200).send({ room, activeUsers });
+        res.status(200).send(room);
     }
     catch (err) {
         console.log(err);
