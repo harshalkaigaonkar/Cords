@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const connectDB = require('./db/db');
-const {router} = require('./Routes/Api/Room');
 const socketio = require('socket.io');
 
 connectDB();
@@ -21,7 +20,7 @@ const io = socketio(Server, {
 //Routes
 app.use('/auth/register', require('./Routes/Register'));
 app.use('/auth/login', require('./Routes/Login'));
-app.use('/api/room', router);
+app.use('/api/room', require('./Routes/Api/Room'));
 
 
 
