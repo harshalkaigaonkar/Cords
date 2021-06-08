@@ -31,7 +31,13 @@ const AuthState = (props) => {
             setAuthToken(localStorage.token);
         }
         const res = await axios.get('http://localhost:3001/auth/login');
-        if (res.data.error) {
+        if(!res.data) {
+            localStorage.removeItem('token');
+            Seterror("Invalid token");
+            return;
+        }
+        if (res.data && res.data.error) {
+            localStorage.removeItem('token');
             Seterror(res.data.error);
             return;
         }
@@ -52,7 +58,7 @@ const AuthState = (props) => {
             return;
         }
         const res = await axios.post('http://localhost:3001/auth/register', data, config);
-        if (res.data.error) {
+        if (res.data && res.data.error) {
             Seterror(res.data.error);
             return;
         }
