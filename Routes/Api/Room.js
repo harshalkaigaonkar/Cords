@@ -77,9 +77,7 @@ router.get('/getRoom', auth, async (req, res) => {
 
         if (!room) return res.send({ error: { message: "room doesn't exist" } });
 
-        activeUsers = rooms[roomname].users;
-
-        res.status(200).send({ room, activeUsers });
+        res.status(200).send(room);
     }
     catch (err) {
         console.log(err);

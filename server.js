@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
                 socketId: socket.id
             });
         }
-        socket.broadcast.emit('user joined', { name: data.user.name, users: rooms[data.room.roomname] });
+        socket.to(data.room.roomname).emit('user joined', { name: data.user.name, users: rooms[data.room.roomname] });
         socket.on("send message", (data) => {
             socket.to(data.roomname).emit('received message', data)
         })
@@ -61,6 +61,9 @@ io.on('connection', (socket) => {
                 const index = room.findIndex(user => user.name === data.user.name);
                 if (index !== -1) {
                     room.splice(index, 1);
+                }
+                if (room.length === 1) {
+                    delete room;
                 }
             }
             socket.to(data.room.roomname).emit('disconnected user', { name: data.user.name, users: rooms[data.room.roomname] })
