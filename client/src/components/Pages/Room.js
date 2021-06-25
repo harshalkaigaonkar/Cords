@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import AuthContext from '../../context/auth/AuthContext';
 import RoomContext from '../../context/room/RoomContext';
 import ErrorContext from '../../context/error/ErrorContext';
+import './Room.css';
 import axios from 'axios';
 import io from 'socket.io-client';
 
@@ -31,7 +32,7 @@ const Room = (props) => {
     // const [CallEnded, SetCallEnded] = useState(false);
     // const [Name, SetName] = useState("");
 
-    const myVideo = useRef();
+    // const myVideo = useRef();
     // const userVideo = useRef();
     // const connectionRef = useRef();
     const activeUsers = useRef();
@@ -40,10 +41,10 @@ const Room = (props) => {
 
 
 
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-            Setstream(stream);
-            myVideo.current.srcObject = stream;
-        });
+        // navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+        //     Setstream(stream);
+        //     myVideo.current.srcObject = stream;
+        // });
 
         getRoomData(user, roomname, socket);
 
@@ -123,32 +124,46 @@ const Room = (props) => {
         Setmsg(e.target.value);
     }
     return (
-        <div>
-            {error && <h3>{error}</h3>}
-            <h2>{roomname}</h2>
-            <input type='submit' value='disconnect' onClick={onDisconnection} />
-            {Alert && <h3>{Alert}</h3>}
-            {activeUsers.current &&
-                activeUsers.current.map(user => (
-                    <h5 key={user.socketId}> {user.name} </h5>
-                ))
-            }
-            <div>
-                {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
-            </div>
-            <form onSubmit={onSubmit}>
-                <input autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
-                <button>Send</button>
-            </form>
-            <ul id='message'>
-                {
-                    messages.map(message => (
-                        <li key={message._id}>
-                            {getMessageUi(message)}
-                        </li>
+        <div className='chatPage'>
+            <div className='chats'>
+                <h2>{roomname}</h2>
+                <h2>online users :</h2>
+                {activeUsers.current &&
+                    activeUsers.current.map(user => (
+                        <h5 key={user.socketId}> {user.name} </h5>
                     ))
                 }
-            </ul>
+            </div>
+            <div className='chatContent'>
+                <ul id='message'>
+                    {
+                        messages.map(message => (
+                            <li className='msg-content' key={message._id}>
+                                {getMessageUi(message)}
+                            </li>
+                        ))
+                    }
+                </ul>
+
+                <div className='chat-footer'>
+                    <form onSubmit={onSubmit} className='msg-send'>
+                        <input className='dis-btn' type='submit' value='disconnect' onClick={onDisconnection} />
+                        <input className='msg-input' autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
+                        <button className='send-btn'>Send</button>
+                    </form>
+                </div>
+
+            </div>
+            {/* {error && <h3>{error}</h3>}
+
+
+            {Alert && <h3>{Alert}</h3>} */}
+
+            {/* <div>
+                {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
+            </div> */}
+
+
         </div>
     )
 }
