@@ -1,0 +1,39 @@
+.chatPage { 
+    display: flex;
+}
+.chats {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border-right: 7px solid rgb(145, 139, 139);
+    overflow-y: scroll;
+}
+.chatContent {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+.chat-footer {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    bottom: 0;
+    right: 12%;
+    justify-content: center;
+    height: 42px;
+}
+.msg-input{
+    width: 500px;
+    height: 30px;
+}
+.send-btn,.dis-btn{
+    height: 36px;
+}
+
+.msg-content {
+    font-size: 30px;
+}
