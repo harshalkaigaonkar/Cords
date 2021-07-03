@@ -1,4 +1,4 @@
-## Cords
+### Cords
 A project for real-time chats collaboration using socket.io and mern stack.
 
 # Features
