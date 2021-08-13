@@ -5,6 +5,7 @@
 
 ## Overview
 A project for real-time chats collaboration using socket.io and mern stack.
+if you are a learner of [Brad Traversy's](https://www.youtube.com/user/TechGuyWeb) channel, you can easily understand repo. 
 
 ## Update
 Shifted [here](https://github.com/xyaxis-co/xyaxis).
