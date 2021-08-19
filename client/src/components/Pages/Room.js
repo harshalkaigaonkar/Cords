@@ -24,27 +24,9 @@ const Room = (props) => {
     const [msg, Setmsg] = useState("");
     const [Alert, SetAlert] = useState(null);
     const [stream, Setstream] = useState(null);
-    // const [RecievingCall, SetRecievingCall] = useState(false);
-    // const [Caller, SetCaller] = useState("");
-    // const [CallerSignal, SetCallerSignal] = useState();
-    // const [CallAccepted, SetCallAccepted] = useState(false);
-    // const [IdToCall, SetIdToCall] = useState("");
-    // const [CallEnded, SetCallEnded] = useState(false);
-    // const [Name, SetName] = useState("");
-
-    // const myVideo = useRef();
-    // const userVideo = useRef();
-    // const connectionRef = useRef();
     const activeUsers = useRef();
 
     useEffect(() => {
-
-
-
-        // navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-        //     Setstream(stream);
-        //     myVideo.current.srcObject = stream;
-        // });
 
         getRoomData(user, roomname, socket);
 
@@ -154,16 +136,6 @@ const Room = (props) => {
                 </div>
 
             </div>
-            {/* {error && <h3>{error}</h3>}
-
-
-            {Alert && <h3>{Alert}</h3>} */}
-
-            {/* <div>
-                {stream && <video style={{ width: "300px" }} muted autoPlay ref={myVideo} />}
-            </div> */}
-
-
         </div>
     )
 }
