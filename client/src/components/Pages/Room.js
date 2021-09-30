@@ -109,6 +109,9 @@ const Room = (props) => {
         <div className='chatPage'>
             <div className='chats'>
                 <h2>{roomname}</h2>
+                <div>
+                    <button onClick={onDisconnection}>Disconnect</button>
+                </div>
                 <h2>online users :</h2>
                 {activeUsers.current &&
                     activeUsers.current.map(user => (
@@ -126,10 +129,8 @@ const Room = (props) => {
                         ))
                     }
                 </ul>
-
                 <div className='chat-footer'>
                     <form onSubmit={onSubmit} className='msg-send'>
-                        <input className='dis-btn' type='submit' value='disconnect' onClick={onDisconnection} />
                         <input className='msg-input' autoFocus type="text" name="message" placeholder="message" onChange={onChange} value={msg} />
                         <button className='send-btn'>Send</button>
                     </form>

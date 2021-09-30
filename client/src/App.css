@@ -2,17 +2,6 @@
   --space: 15px
 }
 
-.navbar {
-  padding: var(--space);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-bottom: 7px solid rgb(212, 207, 207);
-}
-.navbar .app-name {
-  flex: 1;
-}
-
 /*cursor */
 .pointer {
   cursor: pointer;

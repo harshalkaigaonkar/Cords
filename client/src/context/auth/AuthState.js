@@ -54,8 +54,7 @@ const AuthState = (props) => {
         }
 
         if (!data) {
-            console.log("hello here");
-            return;
+            Seterror('Error Occured!!');
         }
         const res = await axios.post('http://localhost:3001/auth/register', data, config);
         if (res.data && res.data.error) {
