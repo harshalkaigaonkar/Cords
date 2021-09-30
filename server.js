@@ -5,6 +5,7 @@ const connectDB = require('./db/db');
 const socketio = require('socket.io');
 const path = require('path');
 
+// database connection
 connectDB();
 const app = express();
 app.use(cors());
@@ -30,6 +31,7 @@ app.use('/api/room', require('./Routes/Api/Room'));
 
 
 const rooms = {};
+// later is to changed in cache using redis
 
 // Schema of Rooms :
 
