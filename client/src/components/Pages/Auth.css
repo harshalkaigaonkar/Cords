@@ -1,10 +1,10 @@
 .auth-page {
   padding-top: 15vh;
-  background: linear-gradient(135deg, #ea5c54 0%, #bb6dec 100%);
+  background: linear-gradient(135deg, #262936 0%, #794bc4 100%);
 }
 .auth-form {
   width: 22vw;
-  background-color: #2a2d3b;
+  background-color: #333749;
   margin: auto;
   min-height: 50vh;
   padding: 2.5%;
@@ -30,7 +30,7 @@
   margin: auto;
   margin: 5%;
   font-size: 1rem;
-  border: 3px solid #ea5c54;
+  border: 3px solid #794bc4;
   background-color: transparent;
   color: white;
   border-radius: 20px;
@@ -38,7 +38,7 @@
   transition: 0.4s ease;
 }
 .auth-form button:hover {
-  background-color: #ea5c54;
+  background-color: #794bc4;
 }
 .auth-form p {
   color: white !important;
