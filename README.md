@@ -1,4 +1,7 @@
-
+![GitHub](https://img.shields.io/github/license/harshalkaigaonkar/Cords?logo=Github)
+![Github](https://img.shields.io/badge/Language-JavaScript-yellow?logo=JavaScript)
+![Github](https://img.shields.io/badge/Language-HTML-red?logo=HTML)
+![Github](https://img.shields.io/badge/Language-CSS-purple?logo=CSS)
 # Cords
 
 ## Overview
