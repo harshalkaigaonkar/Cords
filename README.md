@@ -3,6 +3,7 @@
 ![Github](https://img.shields.io/badge/Language-HTML-red?logo=HTML)
 ![Github](https://img.shields.io/badge/Language-CSS-purple?logo=CSS)
 # Cords
+It is an simple chat application which provides better clarity in conversations between two and more peer.
 
 ## Overview
 A project for real-time chats collaboration using socket.io and mern stack.
