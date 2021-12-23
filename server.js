@@ -80,5 +80,5 @@ io.on('connection', (socket) => {
     })
 
 })
-
+// this puts all these APIs to the server
 Server.listen(PORT, () => console.log(`Server on port ${PORT}`));
