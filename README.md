@@ -9,9 +9,9 @@ It is an simple chat application which provides better clarity in conversations 
 A project for real-time chats collaboration using socket.io and mern stack.
 
 ### Features👈
-* This allows to save the complete chat messages for a particular room.
-* a feature to join any public chat room.
-* This is a clubhouse but for text.
+* This allows to save the complete chat messages for a particular room
+* A feature to join any public chat room.
+* this is a clubhouse but for text.
 
 ### Description✉️
 * This projects(cords) is a basic chat application which is used to chat between two and more peers.
