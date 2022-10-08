@@ -6,7 +6,7 @@
 It is an simple chat application which provides better clarity in conversations between two and more peers.
 
 ## Overview
-A project for real-time chats collaboration using socket.io and mern stack.
+A project for real-time chats collaboration using socket.io and MERN stack.
 
 ### Features👈
 * This allows to save the complete chat messages for a particular room.
