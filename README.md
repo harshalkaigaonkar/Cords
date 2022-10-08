@@ -18,10 +18,10 @@ A project for real-time chats collaboration using socket.io and mern stack.
 * You can have a complete control to banned or unbanned a particular member from a chatroom this is the usp of this application.
 
 ### Tech Stack🧑‍💻
-* Frontend(React.js)
-* Backend(Express.js, Node.js)
-* Database(MongoDB)
-* Libraries(JWT, Socket.io, WebRTC)
+* Frontend(React.js).
+* Backend(Express.js, Node.js).
+* Database(MongoDB).
+* Libraries(JWT, Socket.io, WebRTC).
 
 ### For Contribution
  *  Head over to CONTRIBUTING.md
